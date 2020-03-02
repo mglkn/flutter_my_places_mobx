@@ -3,9 +3,16 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'ui/screens/screens.dart';
 
+import 'data/db_repository.dart';
+import 'store/place_form.dart';
+
 class AppModule extends MainModule {
   @override
-  List<Bind> get binds => [];
+  List<Bind> get binds => [
+        Bind<DbDataRepository>((_) => DbDataRepository.db()),
+        Bind<PlaceFormStore>(
+            (_) => PlaceFormStore(repo: DbDataRepository.db())),
+      ];
 
   @override
   List<Router> get routers => [
