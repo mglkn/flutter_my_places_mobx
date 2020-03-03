@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:geocoder/geocoder.dart';
@@ -39,7 +38,10 @@ abstract class _PlaceFormStore with Store {
   Address location;
 
   @observable
-  File image;
+  File imageFile;
+
+  @observable
+  String imageBase64;
 
   @observable
   int rate;
@@ -50,14 +52,15 @@ abstract class _PlaceFormStore with Store {
 
   @action
   createPlace() {
-    return _repo.createPlace(
-      Place(
-        name: name,
-        type: type,
-        location: location.addressLine,
-        rate: rate,
-        image: base64Encode(image.readAsBytesSync()),
-      ),
-    );
+    print('create place $name, $type');
+    // return _repo.createPlace(
+    //   Place(
+    //     name: name,
+    //     type: type,
+    //     location: location.addressLine,
+    //     rate: rate,
+    //     image: base64Encode(image.readAsBytesSync()),
+    //   ),
+    // );
   }
 }

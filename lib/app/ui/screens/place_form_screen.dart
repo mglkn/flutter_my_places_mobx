@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'map_screen.dart';
+import '../../store/place_form.dart';
+import 'widgets/widgets.dart';
 
 class PlaceFormScreen extends StatelessWidget {
   static String routeName = '/place_form';
@@ -16,8 +18,18 @@ class PlaceFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = Modular.get<PlaceFormStore>();
+
     return Scaffold(
       appBar: _appBarBuild(),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.white,
+        icon: Icon(Icons.add, color: Colors.black),
+        label: Text('Save', style: TextStyle(color: Colors.black)),
+        onPressed: () {
+          store.createPlace();
+        },
+      ),
       body: SafeArea(
         child: GestureDetector(
           onTap: () => _focusReset(context),
@@ -57,36 +69,6 @@ class PlaceForm extends StatelessWidget {
   }
 }
 
-class ImageSelector extends StatelessWidget {
-  void _focusReset(BuildContext context) {
-    FocusScopeNode currentFocus = FocusScope.of(context);
-
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _focusReset(context);
-        print('pick image');
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5.0),
-        width: double.infinity,
-        height: 200.0,
-        color: Colors.grey[200],
-        child: Image.asset(
-          'assets/images/selectImagePlaceholder.png',
-          fit: BoxFit.fitHeight,
-        ),
-      ),
-    );
-  }
-}
-
 class NameInput extends StatefulWidget {
   @override
   _NameInputState createState() => _NameInputState();
@@ -109,10 +91,13 @@ class _NameInputState extends State<NameInput> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Modular.get<PlaceFormStore>();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: _controller,
+        onChanged: (newValue) => store.name = _controller.value.text,
         keyboardType: TextInputType.text,
         decoration: InputDecoration(
           filled: true,
@@ -146,10 +131,13 @@ class _TypeInputState extends State<TypeInput> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Modular.get<PlaceFormStore>();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: _controller,
+        onChanged: (newValue) => store.type = _controller.value.text,
         keyboardType: TextInputType.text,
         decoration: InputDecoration(
           filled: true,

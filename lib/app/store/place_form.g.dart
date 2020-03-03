@@ -60,21 +60,38 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
     }, _$locationAtom, name: '${_$locationAtom.name}_set');
   }
 
-  final _$imageAtom = Atom(name: '_PlaceFormStore.image');
+  final _$imageFileAtom = Atom(name: '_PlaceFormStore.imageFile');
 
   @override
-  File get image {
-    _$imageAtom.context.enforceReadPolicy(_$imageAtom);
-    _$imageAtom.reportObserved();
-    return super.image;
+  File get imageFile {
+    _$imageFileAtom.context.enforceReadPolicy(_$imageFileAtom);
+    _$imageFileAtom.reportObserved();
+    return super.imageFile;
   }
 
   @override
-  set image(File value) {
-    _$imageAtom.context.conditionallyRunInAction(() {
-      super.image = value;
-      _$imageAtom.reportChanged();
-    }, _$imageAtom, name: '${_$imageAtom.name}_set');
+  set imageFile(File value) {
+    _$imageFileAtom.context.conditionallyRunInAction(() {
+      super.imageFile = value;
+      _$imageFileAtom.reportChanged();
+    }, _$imageFileAtom, name: '${_$imageFileAtom.name}_set');
+  }
+
+  final _$imageBase64Atom = Atom(name: '_PlaceFormStore.imageBase64');
+
+  @override
+  String get imageBase64 {
+    _$imageBase64Atom.context.enforceReadPolicy(_$imageBase64Atom);
+    _$imageBase64Atom.reportObserved();
+    return super.imageBase64;
+  }
+
+  @override
+  set imageBase64(String value) {
+    _$imageBase64Atom.context.conditionallyRunInAction(() {
+      super.imageBase64 = value;
+      _$imageBase64Atom.reportChanged();
+    }, _$imageBase64Atom, name: '${_$imageBase64Atom.name}_set');
   }
 
   final _$rateAtom = Atom(name: '_PlaceFormStore.rate');
@@ -110,7 +127,7 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
   @override
   String toString() {
     final string =
-        'name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},image: ${image.toString()},rate: ${rate.toString()}';
+        'name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()}';
     return '{$string}';
   }
 }
