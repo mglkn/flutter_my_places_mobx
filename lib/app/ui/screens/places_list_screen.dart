@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../data/db_repository.dart';
 import '../../data/db.dart';
+import 'place_form_screen.dart';
 
 class PlacesListScreen extends StatelessWidget {
   static String routeName = '/';
@@ -12,6 +13,13 @@ class PlacesListScreen extends StatelessWidget {
     return Scaffold(
       appBar: _appBarBuild(),
       body: PlacesList(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add, color: Colors.black),
+        backgroundColor: Colors.white,
+        onPressed: () {
+          Modular.to.pushNamed(PlaceFormScreen.routeName);
+        },
+      ),
     );
   }
 
