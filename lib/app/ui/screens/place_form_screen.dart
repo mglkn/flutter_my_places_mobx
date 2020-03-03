@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:my_places/app/ui/screens/screens.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'map_screen.dart';
 import '../../store/place_form.dart';
@@ -76,6 +77,8 @@ class PlaceForm extends StatelessWidget {
           NameInput(),
           TypeInput(),
           AddressInput(),
+          const SizedBox(height: 20.0),
+          RatingInput(),
         ],
       ),
     );
@@ -211,6 +214,32 @@ class _AddressInputState extends State<AddressInput> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class RatingInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final store = Modular.get<PlaceFormStore>();
+
+    return RatingBar(
+      initialRating: store.rate.toDouble(),
+      minRating: 0,
+      itemCount: 5,
+      allowHalfRating: false,
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.black45,
+      ),
+      direction: Axis.horizontal,
+      onRatingUpdate: (rating) {
+        store.rate = rating.toInt();
+      },
+      itemSize: 35.0,
+      unratedColor: Colors.grey[400],
+      glow: false,
+      // ignoreGestures: true,
     );
   }
 }
