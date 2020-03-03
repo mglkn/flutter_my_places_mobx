@@ -6,11 +6,24 @@ import 'map_screen.dart';
 class PlaceFormScreen extends StatelessWidget {
   static String routeName = '/place_form';
 
+  void _focusReset(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBarBuild(),
-      body: PlaceForm(),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => _focusReset(context),
+          child: PlaceForm(),
+        ),
+      ),
     );
   }
 
@@ -45,10 +58,19 @@ class PlaceForm extends StatelessWidget {
 }
 
 class ImageSelector extends StatelessWidget {
+  void _focusReset(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        _focusReset(context);
         print('pick image');
       },
       child: Container(
