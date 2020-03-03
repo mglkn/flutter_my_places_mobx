@@ -12,7 +12,9 @@ class PlacesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBarBuild(),
-      body: PlacesList(),
+      body: SafeArea(
+        child: PlacesList(),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, color: Colors.black),
         backgroundColor: Colors.white,
