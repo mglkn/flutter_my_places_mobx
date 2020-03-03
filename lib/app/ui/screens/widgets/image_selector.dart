@@ -28,12 +28,13 @@ class ImageSelector extends StatelessWidget {
         child: new Wrap(
           children: <Widget>[
             new ListTile(
-                leading: new Icon(Icons.image),
-                title: new Text('Photo archive'),
-                onTap: () async {
-                  await _selectImage(ImageSource.gallery);
-                  Navigator.pop(context);
-                }),
+              leading: new Icon(Icons.image),
+              title: new Text('Photo archive'),
+              onTap: () async {
+                await _selectImage(ImageSource.gallery);
+                Navigator.pop(context);
+              },
+            ),
             new ListTile(
               leading: new Icon(Icons.camera),
               title: new Text('Camera'),

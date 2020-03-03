@@ -63,6 +63,11 @@ class PlaceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(place.name);
+    return GestureDetector(
+      onTap: () {
+        Modular.to.pushNamed(PlaceFormScreen.routeName, arguments: place);
+      },
+      child: Text(place.name),
+    );
   }
 }

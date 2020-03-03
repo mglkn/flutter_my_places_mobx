@@ -18,7 +18,8 @@ class AppModule extends MainModule {
   List<Router> get routers => [
         Router(PlacesListScreen.routeName,
             child: (_, __) => PlacesListScreen()),
-        Router(PlaceFormScreen.routeName, child: (_, __) => PlaceFormScreen()),
+        Router(PlaceFormScreen.routeName,
+            child: (_, args) => PlaceFormScreen(place: args.data)),
         Router(MapScreen.routeName, child: (_, __) => MapScreen()),
       ];
 

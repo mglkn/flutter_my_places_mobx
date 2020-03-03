@@ -9,6 +9,23 @@ part of 'place_form.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$PlaceFormStore on _PlaceFormStore, Store {
+  final _$_placeAtom = Atom(name: '_PlaceFormStore._place');
+
+  @override
+  dynamic get _place {
+    _$_placeAtom.context.enforceReadPolicy(_$_placeAtom);
+    _$_placeAtom.reportObserved();
+    return super._place;
+  }
+
+  @override
+  set _place(dynamic value) {
+    _$_placeAtom.context.conditionallyRunInAction(() {
+      super._place = value;
+      _$_placeAtom.reportChanged();
+    }, _$_placeAtom, name: '${_$_placeAtom.name}_set');
+  }
+
   final _$nameAtom = Atom(name: '_PlaceFormStore.name');
 
   @override
@@ -115,10 +132,10 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
       ActionController(name: '_PlaceFormStore');
 
   @override
-  dynamic createPlace() {
+  dynamic savePlace() {
     final _$actionInfo = _$_PlaceFormStoreActionController.startAction();
     try {
-      return super.createPlace();
+      return super.savePlace();
     } finally {
       _$_PlaceFormStoreActionController.endAction(_$actionInfo);
     }

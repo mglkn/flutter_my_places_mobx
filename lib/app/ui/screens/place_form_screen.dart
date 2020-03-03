@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:my_places/app/ui/screens/screens.dart';
 
 import 'map_screen.dart';
 import '../../store/place_form.dart';
 import 'widgets/widgets.dart';
+import '../../data/db.dart';
 
 class PlaceFormScreen extends StatelessWidget {
   static String routeName = '/place_form';
+  final Place place;
+
+  PlaceFormScreen({this.place}) {
+    if (place != null) {
+      Modular.get<PlaceFormStore>().init(place);
+    }
+  }
 
   void _focusReset(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
@@ -21,13 +31,14 @@ class PlaceFormScreen extends StatelessWidget {
     final store = Modular.get<PlaceFormStore>();
 
     return Scaffold(
-      appBar: _appBarBuild(),
+      appBar: _appBarBuild(store),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.white,
         icon: Icon(Icons.add, color: Colors.black),
         label: Text('Save', style: TextStyle(color: Colors.black)),
-        onPressed: () {
-          store.createPlace();
+        onPressed: () async {
+          await store.savePlace();
+          Navigator.pop(context);
         },
       ),
       body: SafeArea(
@@ -39,11 +50,13 @@ class PlaceFormScreen extends StatelessWidget {
     );
   }
 
-  _appBarBuild() {
+  _appBarBuild(PlaceFormStore store) {
     return AppBar(
-      title: Text(
-        'New Place',
-        style: TextStyle(color: Colors.grey[700]),
+      title: Observer(
+        builder: (_) => Text(
+          store.place != null ? store.place.name : 'New Place',
+          style: TextStyle(color: Colors.grey[700]),
+        ),
       ),
       centerTitle: true,
       backgroundColor: Colors.grey[100],
@@ -79,7 +92,8 @@ class _NameInputState extends State<NameInput> {
 
   @override
   void initState() {
-    _controller = TextEditingController();
+    final store = Modular.get<PlaceFormStore>();
+    _controller = TextEditingController(text: store.name);
     super.initState();
   }
 
@@ -97,7 +111,7 @@ class _NameInputState extends State<NameInput> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: _controller,
-        onChanged: (newValue) => store.name = _controller.value.text,
+        onChanged: (newValue) => store.name = newValue,
         keyboardType: TextInputType.text,
         decoration: InputDecoration(
           filled: true,
@@ -119,7 +133,8 @@ class _TypeInputState extends State<TypeInput> {
 
   @override
   void initState() {
-    _controller = TextEditingController();
+    final store = Modular.get<PlaceFormStore>();
+    _controller = TextEditingController(text: store.type);
     super.initState();
   }
 
@@ -137,7 +152,7 @@ class _TypeInputState extends State<TypeInput> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: _controller,
-        onChanged: (newValue) => store.type = _controller.value.text,
+        onChanged: (newValue) => store.type = newValue,
         keyboardType: TextInputType.text,
         decoration: InputDecoration(
           filled: true,
