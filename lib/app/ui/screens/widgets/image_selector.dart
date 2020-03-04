@@ -70,20 +70,22 @@ class ImageSelector extends StatelessWidget {
         height: 200.0,
         color: Colors.grey[200],
         child: Observer(
-          builder: (_) => _store.imageFile != null
-              ? Image.asset(
-                  _store.imageFile.path,
-                  fit: BoxFit.fitWidth,
-                )
-              : _store.imageBase64 != null
-                  ? Image.memory(
-                      base64Decode(_store.imageBase64),
-                      fit: BoxFit.fitWidth,
-                    )
-                  : Image.asset(
-                      'assets/images/selectImagePlaceholder.png',
-                      fit: BoxFit.fitHeight,
-                    ),
+          builder: (_) {
+            return _store.imageFile != null
+                ? Image.file(
+                    _store.imageFile,
+                    fit: BoxFit.fitWidth,
+                  )
+                : _store.imageBase64 != null
+                    ? Image.memory(
+                        base64Decode(_store.imageBase64),
+                        fit: BoxFit.fitWidth,
+                      )
+                    : Image.asset(
+                        'assets/images/selectImagePlaceholder.png',
+                        fit: BoxFit.fitHeight,
+                      );
+          },
         ),
       ),
     );
