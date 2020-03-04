@@ -224,7 +224,7 @@ class RatingInput extends StatelessWidget {
     final store = Modular.get<PlaceFormStore>();
 
     return RatingBar(
-      initialRating: store.rate.toDouble(),
+      initialRating: store.rate?.toDouble() ?? 0,
       minRating: 0,
       itemCount: 5,
       allowHalfRating: false,
