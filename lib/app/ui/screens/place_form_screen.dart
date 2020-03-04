@@ -189,30 +189,36 @@ class _AddressInputState extends State<AddressInput> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Modular.get<PlaceFormStore>();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Stack(
-        children: <Widget>[
-          TextField(
-            controller: _controller,
-            keyboardType: TextInputType.text,
-            enabled: false,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.grey[200],
-              hintText: "Address",
+      child: Observer(
+        builder: (_) => Stack(
+          children: <Widget>[
+            TextField(
+              controller: _controller,
+              keyboardType: TextInputType.text,
+              enabled: !store.isInternetConnected,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[200],
+                hintText: "Address",
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: Icon(Icons.location_on),
-              onPressed: () {
-                Modular.to.pushNamed(MapScreen.routeName);
-              },
-            ),
-          ),
-        ],
+            store.isInternetConnected
+                ? Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: Icon(Icons.location_on),
+                      onPressed: () {
+                        Modular.to.pushNamed(MapScreen.routeName);
+                      },
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
       ),
     );
   }

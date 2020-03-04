@@ -26,6 +26,26 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
     }, _$_placeAtom, name: '${_$_placeAtom.name}_set');
   }
 
+  final _$isInternetConnectedAtom =
+      Atom(name: '_PlaceFormStore.isInternetConnected');
+
+  @override
+  bool get isInternetConnected {
+    _$isInternetConnectedAtom.context
+        .enforceReadPolicy(_$isInternetConnectedAtom);
+    _$isInternetConnectedAtom.reportObserved();
+    return super.isInternetConnected;
+  }
+
+  @override
+  set isInternetConnected(bool value) {
+    _$isInternetConnectedAtom.context.conditionallyRunInAction(() {
+      super.isInternetConnected = value;
+      _$isInternetConnectedAtom.reportChanged();
+    }, _$isInternetConnectedAtom,
+        name: '${_$isInternetConnectedAtom.name}_set');
+  }
+
   final _$nameAtom = Atom(name: '_PlaceFormStore.name');
 
   @override
@@ -144,7 +164,7 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
   @override
   String toString() {
     final string =
-        'name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()}';
+        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()}';
     return '{$string}';
   }
 }

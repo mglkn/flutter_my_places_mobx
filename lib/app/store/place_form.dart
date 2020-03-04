@@ -27,7 +27,12 @@ abstract class _PlaceFormStore with Store implements Disposable {
       : _repo = repo ?? DbDataRepository.db() {
     _subscription = Connectivity().onConnectivityChanged.listen(
       (ConnectivityResult connectivityResult) {
-        print(connectivityResult);
+        if (connectivityResult == ConnectivityResult.none) {
+          isInternetConnected = false;
+          return;
+        }
+
+        isInternetConnected = true;
       },
     );
   }
@@ -55,6 +60,9 @@ abstract class _PlaceFormStore with Store implements Disposable {
     imageBase64 = _place.image;
     // TODO: init image and location (maybe save coordinates?)
   }
+
+  @observable
+  bool isInternetConnected = false;
 
   @observable
   String name;
@@ -94,6 +102,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
         ),
       );
     }
+
     return _repo.createPlace(
       Place(
         name: name,
