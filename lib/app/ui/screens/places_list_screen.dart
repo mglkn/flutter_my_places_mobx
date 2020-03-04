@@ -19,7 +19,7 @@ class PlacesListScreen extends StatelessWidget {
         child: Icon(Icons.add, color: Colors.black),
         backgroundColor: Colors.white,
         onPressed: () {
-          Modular.to.pushNamed(PlaceFormScreen.routeName);
+          Modular.to.pushNamed(PlaceFormScreen.routeName, arguments: null);
         },
       ),
     );

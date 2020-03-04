@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:mobx/mobx.dart';
+import 'package:connectivity/connectivity.dart';
 
 import '../data/db.dart';
 import '../data/db_repository.dart';
@@ -11,8 +14,9 @@ part 'place_form.g.dart';
 
 class PlaceFormStore = _PlaceFormStore with _$PlaceFormStore;
 
-abstract class _PlaceFormStore with Store {
+abstract class _PlaceFormStore with Store implements Disposable {
   final DbDataRepository _repo;
+  StreamSubscription<ConnectivityResult> _subscription;
 
   @observable
   dynamic _place;
@@ -20,10 +24,29 @@ abstract class _PlaceFormStore with Store {
   set place(Place newValue) => _place = newValue;
 
   _PlaceFormStore({DbDataRepository repo})
-      : _repo = repo ?? DbDataRepository.db();
+      : _repo = repo ?? DbDataRepository.db() {
+    _subscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult connectivityResult) {
+        print(connectivityResult);
+      },
+    );
+  }
 
-  init(Place place) {
-    if (place == null) return;
+  @override
+  void dispose() {
+    _subscription.cancel();
+  }
+
+  void init(Place place) {
+    if (place == null) {
+      name = '';
+      type = '';
+      rate = 0;
+      imageBase64 = null;
+      imageFile = null;
+      return;
+    }
+
     _place = place;
 
     name = _place.name;
