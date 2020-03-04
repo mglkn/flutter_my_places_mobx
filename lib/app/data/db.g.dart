@@ -11,7 +11,8 @@ class Place extends DataClass implements Insertable<Place> {
   final int id;
   final String name;
   final String type;
-  final String location;
+  final String address;
+  final String coordinates;
   final String image;
   final int rate;
   final DateTime date;
@@ -19,7 +20,8 @@ class Place extends DataClass implements Insertable<Place> {
       {this.id,
       @required this.name,
       @required this.type,
-      this.location,
+      this.address,
+      this.coordinates,
       this.image,
       this.rate,
       this.date});
@@ -33,8 +35,10 @@ class Place extends DataClass implements Insertable<Place> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       type: stringType.mapFromDatabaseResponse(data['${effectivePrefix}type']),
-      location: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}location']),
+      address:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}address']),
+      coordinates: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}coordinates']),
       image:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}image']),
       rate: intType.mapFromDatabaseResponse(data['${effectivePrefix}rate']),
@@ -49,7 +53,8 @@ class Place extends DataClass implements Insertable<Place> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       type: serializer.fromJson<String>(json['type']),
-      location: serializer.fromJson<String>(json['location']),
+      address: serializer.fromJson<String>(json['address']),
+      coordinates: serializer.fromJson<String>(json['coordinates']),
       image: serializer.fromJson<String>(json['image']),
       rate: serializer.fromJson<int>(json['rate']),
       date: serializer.fromJson<DateTime>(json['date']),
@@ -62,7 +67,8 @@ class Place extends DataClass implements Insertable<Place> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'type': serializer.toJson<String>(type),
-      'location': serializer.toJson<String>(location),
+      'address': serializer.toJson<String>(address),
+      'coordinates': serializer.toJson<String>(coordinates),
       'image': serializer.toJson<String>(image),
       'rate': serializer.toJson<int>(rate),
       'date': serializer.toJson<DateTime>(date),
@@ -75,9 +81,12 @@ class Place extends DataClass implements Insertable<Place> {
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      location: location == null && nullToAbsent
+      address: address == null && nullToAbsent
           ? const Value.absent()
-          : Value(location),
+          : Value(address),
+      coordinates: coordinates == null && nullToAbsent
+          ? const Value.absent()
+          : Value(coordinates),
       image:
           image == null && nullToAbsent ? const Value.absent() : Value(image),
       rate: rate == null && nullToAbsent ? const Value.absent() : Value(rate),
@@ -89,7 +98,8 @@ class Place extends DataClass implements Insertable<Place> {
           {int id,
           String name,
           String type,
-          String location,
+          String address,
+          String coordinates,
           String image,
           int rate,
           DateTime date}) =>
@@ -97,7 +107,8 @@ class Place extends DataClass implements Insertable<Place> {
         id: id ?? this.id,
         name: name ?? this.name,
         type: type ?? this.type,
-        location: location ?? this.location,
+        address: address ?? this.address,
+        coordinates: coordinates ?? this.coordinates,
         image: image ?? this.image,
         rate: rate ?? this.rate,
         date: date ?? this.date,
@@ -108,7 +119,8 @@ class Place extends DataClass implements Insertable<Place> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('type: $type, ')
-          ..write('location: $location, ')
+          ..write('address: $address, ')
+          ..write('coordinates: $coordinates, ')
           ..write('image: $image, ')
           ..write('rate: $rate, ')
           ..write('date: $date')
@@ -124,9 +136,11 @@ class Place extends DataClass implements Insertable<Place> {
           $mrjc(
               type.hashCode,
               $mrjc(
-                  location.hashCode,
+                  address.hashCode,
                   $mrjc(
-                      image.hashCode, $mrjc(rate.hashCode, date.hashCode)))))));
+                      coordinates.hashCode,
+                      $mrjc(image.hashCode,
+                          $mrjc(rate.hashCode, date.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -134,7 +148,8 @@ class Place extends DataClass implements Insertable<Place> {
           other.id == this.id &&
           other.name == this.name &&
           other.type == this.type &&
-          other.location == this.location &&
+          other.address == this.address &&
+          other.coordinates == this.coordinates &&
           other.image == this.image &&
           other.rate == this.rate &&
           other.date == this.date);
@@ -144,7 +159,8 @@ class PlacesCompanion extends UpdateCompanion<Place> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> type;
-  final Value<String> location;
+  final Value<String> address;
+  final Value<String> coordinates;
   final Value<String> image;
   final Value<int> rate;
   final Value<DateTime> date;
@@ -152,7 +168,8 @@ class PlacesCompanion extends UpdateCompanion<Place> {
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.type = const Value.absent(),
-    this.location = const Value.absent(),
+    this.address = const Value.absent(),
+    this.coordinates = const Value.absent(),
     this.image = const Value.absent(),
     this.rate = const Value.absent(),
     this.date = const Value.absent(),
@@ -161,7 +178,8 @@ class PlacesCompanion extends UpdateCompanion<Place> {
     this.id = const Value.absent(),
     @required String name,
     @required String type,
-    this.location = const Value.absent(),
+    this.address = const Value.absent(),
+    this.coordinates = const Value.absent(),
     this.image = const Value.absent(),
     this.rate = const Value.absent(),
     this.date = const Value.absent(),
@@ -171,7 +189,8 @@ class PlacesCompanion extends UpdateCompanion<Place> {
       {Value<int> id,
       Value<String> name,
       Value<String> type,
-      Value<String> location,
+      Value<String> address,
+      Value<String> coordinates,
       Value<String> image,
       Value<int> rate,
       Value<DateTime> date}) {
@@ -179,7 +198,8 @@ class PlacesCompanion extends UpdateCompanion<Place> {
       id: id ?? this.id,
       name: name ?? this.name,
       type: type ?? this.type,
-      location: location ?? this.location,
+      address: address ?? this.address,
+      coordinates: coordinates ?? this.coordinates,
       image: image ?? this.image,
       rate: rate ?? this.rate,
       date: date ?? this.date,
@@ -224,13 +244,27 @@ class $PlacesTable extends Places with TableInfo<$PlacesTable, Place> {
     );
   }
 
-  final VerificationMeta _locationMeta = const VerificationMeta('location');
-  GeneratedTextColumn _location;
+  final VerificationMeta _addressMeta = const VerificationMeta('address');
+  GeneratedTextColumn _address;
   @override
-  GeneratedTextColumn get location => _location ??= _constructLocation();
-  GeneratedTextColumn _constructLocation() {
+  GeneratedTextColumn get address => _address ??= _constructAddress();
+  GeneratedTextColumn _constructAddress() {
     return GeneratedTextColumn(
-      'location',
+      'address',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _coordinatesMeta =
+      const VerificationMeta('coordinates');
+  GeneratedTextColumn _coordinates;
+  @override
+  GeneratedTextColumn get coordinates =>
+      _coordinates ??= _constructCoordinates();
+  GeneratedTextColumn _constructCoordinates() {
+    return GeneratedTextColumn(
+      'coordinates',
       $tableName,
       true,
     );
@@ -271,7 +305,7 @@ class $PlacesTable extends Places with TableInfo<$PlacesTable, Place> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, type, location, image, rate, date];
+      [id, name, type, address, coordinates, image, rate, date];
   @override
   $PlacesTable get asDslTable => this;
   @override
@@ -297,9 +331,13 @@ class $PlacesTable extends Places with TableInfo<$PlacesTable, Place> {
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
-    if (d.location.present) {
-      context.handle(_locationMeta,
-          location.isAcceptableValue(d.location.value, _locationMeta));
+    if (d.address.present) {
+      context.handle(_addressMeta,
+          address.isAcceptableValue(d.address.value, _addressMeta));
+    }
+    if (d.coordinates.present) {
+      context.handle(_coordinatesMeta,
+          coordinates.isAcceptableValue(d.coordinates.value, _coordinatesMeta));
     }
     if (d.image.present) {
       context.handle(
@@ -336,8 +374,11 @@ class $PlacesTable extends Places with TableInfo<$PlacesTable, Place> {
     if (d.type.present) {
       map['type'] = Variable<String, StringType>(d.type.value);
     }
-    if (d.location.present) {
-      map['location'] = Variable<String, StringType>(d.location.value);
+    if (d.address.present) {
+      map['address'] = Variable<String, StringType>(d.address.value);
+    }
+    if (d.coordinates.present) {
+      map['coordinates'] = Variable<String, StringType>(d.coordinates.value);
     }
     if (d.image.present) {
       map['image'] = Variable<String, StringType>(d.image.value);

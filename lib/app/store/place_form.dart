@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:mobx/mobx.dart';
@@ -42,7 +43,29 @@ abstract class _PlaceFormStore with Store implements Disposable {
     _subscription.cancel();
   }
 
+  _setLocation() async {
+    final c = _place.coordinates
+        .split(',')
+        .map<double>((String s) => double.parse(s))
+        .toList();
+    final latitude = c[0];
+    final longitude = c[1];
+
+    final coordinates = Coordinates(latitude, longitude);
+    final List<Address> locations =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
+    if (locations.length > 0) {
+      location = locations.first;
+      return;
+    }
+
+    addressOffline = _place.address ?? '';
+  }
+
   void init(Place place) {
+    if (_place != null) return;
+
     if (place == null) {
       name = '';
       type = '';
@@ -54,11 +77,14 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
     _place = place;
 
+    if (_place.coordinates != null) {
+      _setLocation();
+    }
+
     name = _place.name;
     type = _place.type;
     rate = _place.rate;
     imageBase64 = _place.image;
-    // TODO: init image and location (maybe save coordinates?)
   }
 
   @observable
@@ -74,6 +100,9 @@ abstract class _PlaceFormStore with Store implements Disposable {
   Address location;
 
   @observable
+  String addressOffline;
+
+  @observable
   File imageFile;
 
   @observable
@@ -81,6 +110,11 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
   @observable
   int rate;
+
+  @computed
+  String get address => location != null
+      ? '${location.locality}, ${location.thoroughfare}, ${location.featureName}'
+      : addressOffline != null ? addressOffline : null;
 
   bool isFormValid() {
     return name.length != 0;
@@ -92,6 +126,10 @@ abstract class _PlaceFormStore with Store implements Disposable {
         ? imageBase64
         : imageFile != null ? base64Encode(imageFile.readAsBytesSync()) : null;
 
+    final String coordinates = location == null
+        ? null
+        : '${location.coordinates.latitude},${location.coordinates.longitude}';
+
     if (_place != null) {
       return _repo.updatePlace(
         _place.copyWith(
@@ -99,6 +137,8 @@ abstract class _PlaceFormStore with Store implements Disposable {
           type: type,
           rate: rate,
           image: image,
+          address: address,
+          coordinates: coordinates,
         ),
       );
     }
@@ -107,9 +147,10 @@ abstract class _PlaceFormStore with Store implements Disposable {
       Place(
         name: name,
         type: type,
-        // location: location.addressLine,
         rate: rate,
         image: image,
+        address: address,
+        coordinates: coordinates,
       ),
     );
   }

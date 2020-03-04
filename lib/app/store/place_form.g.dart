@@ -9,6 +9,12 @@ part of 'place_form.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$PlaceFormStore on _PlaceFormStore, Store {
+  Computed<String> _$addressComputed;
+
+  @override
+  String get address =>
+      (_$addressComputed ??= Computed<String>(() => super.address)).value;
+
   final _$_placeAtom = Atom(name: '_PlaceFormStore._place');
 
   @override
@@ -97,6 +103,23 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
     }, _$locationAtom, name: '${_$locationAtom.name}_set');
   }
 
+  final _$addressOfflineAtom = Atom(name: '_PlaceFormStore.addressOffline');
+
+  @override
+  String get addressOffline {
+    _$addressOfflineAtom.context.enforceReadPolicy(_$addressOfflineAtom);
+    _$addressOfflineAtom.reportObserved();
+    return super.addressOffline;
+  }
+
+  @override
+  set addressOffline(String value) {
+    _$addressOfflineAtom.context.conditionallyRunInAction(() {
+      super.addressOffline = value;
+      _$addressOfflineAtom.reportChanged();
+    }, _$addressOfflineAtom, name: '${_$addressOfflineAtom.name}_set');
+  }
+
   final _$imageFileAtom = Atom(name: '_PlaceFormStore.imageFile');
 
   @override
@@ -164,7 +187,7 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
   @override
   String toString() {
     final string =
-        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()}';
+        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()},address: ${address.toString()}';
     return '{$string}';
   }
 }

@@ -6,7 +6,8 @@ class Places extends Table {
   IntColumn get id => integer().nullable().autoIncrement()();
   TextColumn get name => text()();
   TextColumn get type => text()();
-  TextColumn get location => text().nullable()();
+  TextColumn get address => text().nullable()();
+  TextColumn get coordinates => text().nullable()();
   TextColumn get image => text().nullable()();
   IntColumn get rate => integer().nullable().withDefault(Constant(0))();
   DateTimeColumn get date => dateTime().nullable()();

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:my_places/app/ui/screens/screens.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mobx/mobx.dart';
 
-import 'map_screen.dart';
 import '../../store/place_form.dart';
 import 'widgets/widgets.dart';
 import '../../data/db.dart';
+import 'screens.dart';
 
 class PlaceFormScreen extends StatelessWidget {
   static String routeName = '/place_form';
@@ -174,16 +175,24 @@ class AddressInput extends StatefulWidget {
 
 class _AddressInputState extends State<AddressInput> {
   TextEditingController _controller;
+  ReactionDisposer disposer;
 
   @override
   void initState() {
-    _controller = TextEditingController();
+    final store = Modular.get<PlaceFormStore>();
+    _controller = TextEditingController(text: store.address);
+
+    disposer = reaction((_) => store.location, (Address location) {
+      _controller?.text = store.address ?? '';
+    });
+
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    disposer();
     super.dispose();
   }
 
@@ -211,8 +220,13 @@ class _AddressInputState extends State<AddressInput> {
                     alignment: Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(Icons.location_on),
-                      onPressed: () {
-                        Modular.to.pushNamed(MapScreen.routeName);
+                      onPressed: () async {
+                        final Address location = await Navigator.of(context)
+                            .pushNamed(MapScreen.routeName);
+
+                        if (location == null) return;
+
+                        store.location = location;
                       },
                     ),
                   )
