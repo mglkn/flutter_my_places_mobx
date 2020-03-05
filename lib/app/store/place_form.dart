@@ -25,16 +25,19 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
   _PlaceFormStore({DbDataRepository repo})
       : _repo = repo ?? DbDataRepository.db() {
-    _subscription = Connectivity().onConnectivityChanged.listen(
-      (ConnectivityResult connectivityResult) {
-        if (connectivityResult == ConnectivityResult.none) {
-          isInternetConnected = false;
-          return;
-        }
+    Connectivity().checkConnectivity().then(_connectivityCb);
 
-        isInternetConnected = true;
-      },
-    );
+    _subscription =
+        Connectivity().onConnectivityChanged.listen(_connectivityCb);
+  }
+
+  void _connectivityCb(ConnectivityResult connectivityResult) {
+    if (connectivityResult == ConnectivityResult.none) {
+      isInternetConnected = false;
+      return;
+    }
+
+    isInternetConnected = true;
   }
 
   @override
