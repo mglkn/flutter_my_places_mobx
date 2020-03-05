@@ -10,12 +10,21 @@ import 'widgets/widgets.dart';
 import '../../data/db.dart';
 import 'screens.dart';
 
-class PlaceFormScreen extends StatelessWidget {
+class PlaceFormScreen extends StatefulWidget {
   static String routeName = '/place_form';
   final Place place;
 
-  PlaceFormScreen({this.place}) {
-    Modular.get<PlaceFormStore>().init(place);
+  PlaceFormScreen({this.place});
+
+  @override
+  _PlaceFormScreenState createState() => _PlaceFormScreenState();
+}
+
+class _PlaceFormScreenState extends State<PlaceFormScreen> {
+  @override
+  void initState() {
+    Modular.get<PlaceFormStore>().init(widget.place);
+    super.initState();
   }
 
   void _focusReset(BuildContext context) {
