@@ -224,6 +224,7 @@ class _AddressInputState extends State<AddressInput> {
                 fillColor: Colors.grey[200],
                 hintText: "Address",
                 errorText: store.locationError,
+                contentPadding: EdgeInsets.only(left: 10.0, right: 40.0),
               ),
             ),
             store.isInternetConnected
