@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../data/db_repository.dart';
 import '../../data/db.dart';
@@ -16,8 +19,7 @@ class PlacesListScreen extends StatelessWidget {
         child: PlacesList(),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add, color: Colors.black),
-        backgroundColor: Colors.white,
+        child: Icon(Icons.add),
         onPressed: () {
           Modular.to.pushNamed(PlaceFormScreen.routeName, arguments: null);
         },
@@ -67,7 +69,101 @@ class PlaceTile extends StatelessWidget {
       onTap: () {
         Modular.to.pushNamed(PlaceFormScreen.routeName, arguments: place);
       },
-      child: Text(place.name),
+      child: Container(
+        margin: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey[400],
+              width: 2.0,
+            ),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            TileAvatar(place.image),
+            Expanded(
+              child: TileContent(place),
+            ),
+            TileRate(place.rate),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TileAvatar extends StatelessWidget {
+  final String image;
+
+  TileAvatar(this.image);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 70.0,
+      height: 70.0,
+      padding: const EdgeInsets.all(8.0),
+      child: CircleAvatar(
+        radius: 30.0,
+        child: ClipOval(
+          child: image != null
+              ? Image.memory(base64Decode(image))
+              : Image.asset('assets/images/selectImagePlaceholder.png'),
+        ),
+        backgroundColor: Colors.grey[300],
+      ),
+    );
+  }
+}
+
+class TileContent extends StatelessWidget {
+  final Place place;
+
+  TileContent(this.place);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(place.name, style: TextStyle(fontSize: 20.0)),
+          Text(place.type, style: TextStyle(color: Colors.grey[600])),
+        ],
+      ),
+    );
+  }
+}
+
+class TileRate extends StatelessWidget {
+  final int rate;
+
+  TileRate(this.rate);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0),
+      child: RatingBar(
+        initialRating: rate?.toDouble() ?? 0,
+        minRating: 0,
+        itemCount: 5,
+        allowHalfRating: false,
+        itemBuilder: (context, _) => Icon(
+          Icons.star,
+          color: Colors.black45,
+        ),
+        direction: Axis.horizontal,
+        itemSize: 15.0,
+        unratedColor: Colors.grey[400],
+        glow: false,
+        ignoreGestures: true,
+        onRatingUpdate: (_) {},
+      ),
     );
   }
 }
