@@ -22,8 +22,13 @@ class _MapScreenState extends State<MapScreen> {
   Set<Marker> _markers = Set();
   Address _location;
   String _error;
+  bool _isPontSelecting = false;
 
   _selectPoint(LatLng latLng) async {
+    setState(() {
+      _isPontSelecting = true;
+    });
+
     final coordinates = Coordinates(latLng.latitude, latLng.longitude);
     List<Address> addresses = [];
 
@@ -33,11 +38,12 @@ class _MapScreenState extends State<MapScreen> {
     } on PlatformException catch (_) {
       setState(() {
         _error = 'Some internet error occured, please reenter in map page';
+        _isPontSelecting = false;
       });
     } catch (_) {
-      print('catched');
       setState(() {
         _error = 'Some error occured, please reenter in map page';
+        _isPontSelecting = false;
       });
     }
 
@@ -54,6 +60,7 @@ class _MapScreenState extends State<MapScreen> {
                 draggable: false,
               ),
             );
+          _isPontSelecting = false;
         },
       );
     }
@@ -69,7 +76,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBarBuild(),
-      floatingActionButton: _location == null
+      floatingActionButton: _location == null || _isPontSelecting
           ? null
           : FloatingActionButton.extended(
               label: Text('DONE'),
