@@ -72,14 +72,16 @@ abstract class _PlaceFormStore with Store implements Disposable {
   }
 
   void init(Place place) {
-    if (_place != null) return;
+    _place = null;
 
+    // reset form
     if (place == null) {
       name = '';
       type = '';
       rate = 0;
       imageBase64 = null;
       imageFile = null;
+      location = null;
       return;
     }
 

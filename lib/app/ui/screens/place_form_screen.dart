@@ -15,9 +15,7 @@ class PlaceFormScreen extends StatelessWidget {
   final Place place;
 
   PlaceFormScreen({this.place}) {
-    if (place != null) {
-      Modular.get<PlaceFormStore>().init(place);
-    }
+    Modular.get<PlaceFormStore>().init(place);
   }
 
   void _focusReset(BuildContext context) {
