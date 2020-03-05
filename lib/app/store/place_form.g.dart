@@ -171,6 +171,23 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
     }, _$rateAtom, name: '${_$rateAtom.name}_set');
   }
 
+  final _$locationErrorAtom = Atom(name: '_PlaceFormStore.locationError');
+
+  @override
+  String get locationError {
+    _$locationErrorAtom.context.enforceReadPolicy(_$locationErrorAtom);
+    _$locationErrorAtom.reportObserved();
+    return super.locationError;
+  }
+
+  @override
+  set locationError(String value) {
+    _$locationErrorAtom.context.conditionallyRunInAction(() {
+      super.locationError = value;
+      _$locationErrorAtom.reportChanged();
+    }, _$locationErrorAtom, name: '${_$locationErrorAtom.name}_set');
+  }
+
   final _$_PlaceFormStoreActionController =
       ActionController(name: '_PlaceFormStore');
 
@@ -187,7 +204,7 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
   @override
   String toString() {
     final string =
-        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()},address: ${address.toString()}';
+        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()},locationError: ${locationError.toString()},address: ${address.toString()}';
     return '{$string}';
   }
 }

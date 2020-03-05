@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:mobx/mobx.dart';
@@ -50,10 +49,19 @@ abstract class _PlaceFormStore with Store implements Disposable {
         .toList();
     final latitude = c[0];
     final longitude = c[1];
+    List<Address> locations = [];
 
     final coordinates = Coordinates(latitude, longitude);
-    final List<Address> locations =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    try {
+      locations =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    } on PlatformException catch (_) {
+      if (isInternetConnected) {
+        locationError = 'Internet connection error, try reload app';
+      }
+    } catch (_) {
+      locationError = 'Something went wrong, try reload app';
+    }
 
     if (locations.length > 0) {
       location = locations.first;
@@ -110,6 +118,9 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
   @observable
   int rate;
+
+  @observable
+  String locationError;
 
   @computed
   String get address => location != null

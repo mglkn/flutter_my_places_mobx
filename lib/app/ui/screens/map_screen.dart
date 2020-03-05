@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 
@@ -20,24 +21,48 @@ class _MapScreenState extends State<MapScreen> {
 
   Set<Marker> _markers = Set();
   Address _location;
+  String _error;
 
   _selectPoint(LatLng latLng) async {
     final coordinates = Coordinates(latLng.latitude, latLng.longitude);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = addresses.first;
+    List<Address> addresses = [];
 
-    setState(() {
-      _location = first;
-      _markers = Set()
-        ..add(
-          Marker(
-            markerId: MarkerId('${latLng.hashCode}'),
-            position: latLng,
-            draggable: false,
-          ),
-        );
-    });
+    try {
+      addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    } on PlatformException catch (_) {
+      setState(() {
+        _error = 'Some internet error occured, please reenter in map page';
+      });
+    } catch (_) {
+      print('catched');
+      setState(() {
+        _error = 'Some error occured, please reenter in map page';
+      });
+    }
+
+    if (addresses.length > 0) {
+      var first = addresses.first;
+      setState(
+        () {
+          _location = first;
+          _markers = Set()
+            ..add(
+              Marker(
+                markerId: MarkerId('${latLng.hashCode}'),
+                position: latLng,
+                draggable: false,
+              ),
+            );
+        },
+      );
+    }
+  }
+
+  String shortAddress() {
+    return _location != null
+        ? '${_location.locality}, ${_location.thoroughfare}, ${_location.featureName}'
+        : '';
   }
 
   @override
@@ -71,8 +96,18 @@ class _MapScreenState extends State<MapScreen> {
                   width: double.infinity,
                   color: Colors.white,
                   child: Center(
-                    child: Text(
-                        '${_location.locality}, ${_location.thoroughfare}, ${_location.featureName}'),
+                    child: Text(shortAddress()),
+                  ),
+                )
+              : Container(),
+          _error != null && _error.length > 0
+              ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  height: 50.0,
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(_error),
                   ),
                 )
               : Container(),

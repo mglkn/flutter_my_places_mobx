@@ -175,16 +175,18 @@ class AddressInput extends StatefulWidget {
 
 class _AddressInputState extends State<AddressInput> {
   TextEditingController _controller;
-  ReactionDisposer disposer;
+  ReactionDisposer locationDisposer;
+  ReactionDisposer addressOfflineDisposer;
 
   @override
   void initState() {
     final store = Modular.get<PlaceFormStore>();
     _controller = TextEditingController(text: store.address);
 
-    disposer = reaction((_) => store.location, (Address location) {
-      _controller?.text = store.address ?? '';
-    });
+    var _reaction = (_) => _controller?.text = store.address ?? '';
+
+    locationDisposer = reaction((_) => store.location, _reaction);
+    addressOfflineDisposer = reaction((_) => store.addressOffline, _reaction);
 
     super.initState();
   }
@@ -192,7 +194,8 @@ class _AddressInputState extends State<AddressInput> {
   @override
   void dispose() {
     _controller.dispose();
-    disposer();
+    locationDisposer();
+    addressOfflineDisposer();
     super.dispose();
   }
 
@@ -208,11 +211,12 @@ class _AddressInputState extends State<AddressInput> {
             TextField(
               controller: _controller,
               keyboardType: TextInputType.text,
-              enabled: !store.isInternetConnected,
+              enabled: false,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.grey[200],
                 hintText: "Address",
+                errorText: store.locationError,
               ),
             ),
             store.isInternetConnected
@@ -228,6 +232,22 @@ class _AddressInputState extends State<AddressInput> {
 
                         store.location = location;
                       },
+                    ),
+                  )
+                : Container(),
+            store.locationError != null && store.locationError.length > 0
+                ? Container(
+                    width: double.infinity,
+                    height: 65.0,
+                    child: Align(
+                      alignment: Alignment(0.0, 1.0),
+                      child: Text(
+                        store.locationError ?? '',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 12.0,
+                        ),
+                      ),
                     ),
                   )
                 : Container(),
