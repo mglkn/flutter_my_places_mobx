@@ -20,6 +20,7 @@ class PlacesListScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
+        elevation: 3.0,
         onPressed: () {
           Modular.to.pushNamed(PlaceFormScreen.routeName, arguments: null);
         },

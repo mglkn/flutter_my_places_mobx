@@ -42,9 +42,9 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
     return Scaffold(
       appBar: _appBarBuild(store),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.white,
-        icon: Icon(Icons.add, color: Colors.black),
-        label: Text('Save', style: TextStyle(color: Colors.black)),
+        icon: Icon(Icons.add),
+        label: Text('Save'),
+        elevation: 3.0,
         onPressed: () async {
           await store.savePlace();
           Navigator.pop(context);

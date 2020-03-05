@@ -74,6 +74,7 @@ class _MapScreenState extends State<MapScreen> {
           : FloatingActionButton.extended(
               label: Text('DONE'),
               icon: Icon(Icons.done),
+              elevation: 3.0,
               onPressed: () {
                 Navigator.of(context).pop(_location);
               },
