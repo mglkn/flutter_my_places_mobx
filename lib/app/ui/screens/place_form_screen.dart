@@ -46,8 +46,8 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         label: Text('Save'),
         elevation: 3.0,
         onPressed: () async {
-          await store.savePlace();
-          Navigator.pop(context);
+          final result = await store.savePlace();
+          if (result) Navigator.pop(context);
         },
       ),
       body: SafeArea(
@@ -120,14 +120,17 @@ class _NameInputState extends State<NameInput> {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        controller: _controller,
-        onChanged: (newValue) => store.name = newValue,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[200],
-          hintText: "Name",
+      child: Observer(
+        builder: (_) => TextField(
+          controller: _controller,
+          onChanged: (newValue) => store.name = newValue,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[200],
+            hintText: "Name",
+            errorText: store.nameFieldError,
+          ),
         ),
       ),
     );
@@ -161,14 +164,17 @@ class _TypeInputState extends State<TypeInput> {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        controller: _controller,
-        onChanged: (newValue) => store.type = newValue,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[200],
-          hintText: "Type",
+      child: Observer(
+        builder: (_) => TextField(
+          controller: _controller,
+          onChanged: (newValue) => store.type = newValue,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[200],
+            hintText: "Type",
+            errorText: store.typeFieldError,
+          ),
         ),
       ),
     );

@@ -188,14 +188,55 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
     }, _$locationErrorAtom, name: '${_$locationErrorAtom.name}_set');
   }
 
+  final _$nameFieldErrorAtom = Atom(name: '_PlaceFormStore.nameFieldError');
+
+  @override
+  String get nameFieldError {
+    _$nameFieldErrorAtom.context.enforceReadPolicy(_$nameFieldErrorAtom);
+    _$nameFieldErrorAtom.reportObserved();
+    return super.nameFieldError;
+  }
+
+  @override
+  set nameFieldError(String value) {
+    _$nameFieldErrorAtom.context.conditionallyRunInAction(() {
+      super.nameFieldError = value;
+      _$nameFieldErrorAtom.reportChanged();
+    }, _$nameFieldErrorAtom, name: '${_$nameFieldErrorAtom.name}_set');
+  }
+
+  final _$typeFieldErrorAtom = Atom(name: '_PlaceFormStore.typeFieldError');
+
+  @override
+  String get typeFieldError {
+    _$typeFieldErrorAtom.context.enforceReadPolicy(_$typeFieldErrorAtom);
+    _$typeFieldErrorAtom.reportObserved();
+    return super.typeFieldError;
+  }
+
+  @override
+  set typeFieldError(String value) {
+    _$typeFieldErrorAtom.context.conditionallyRunInAction(() {
+      super.typeFieldError = value;
+      _$typeFieldErrorAtom.reportChanged();
+    }, _$typeFieldErrorAtom, name: '${_$typeFieldErrorAtom.name}_set');
+  }
+
+  final _$savePlaceAsyncAction = AsyncAction('savePlace');
+
+  @override
+  Future<bool> savePlace() {
+    return _$savePlaceAsyncAction.run(() => super.savePlace());
+  }
+
   final _$_PlaceFormStoreActionController =
       ActionController(name: '_PlaceFormStore');
 
   @override
-  dynamic savePlace() {
+  void checkValidation() {
     final _$actionInfo = _$_PlaceFormStoreActionController.startAction();
     try {
-      return super.savePlace();
+      return super.checkValidation();
     } finally {
       _$_PlaceFormStoreActionController.endAction(_$actionInfo);
     }
@@ -204,7 +245,7 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
   @override
   String toString() {
     final string =
-        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()},locationError: ${locationError.toString()},address: ${address.toString()}';
+        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()},locationError: ${locationError.toString()},nameFieldError: ${nameFieldError.toString()},typeFieldError: ${typeFieldError.toString()},address: ${address.toString()}';
     return '{$string}';
   }
 }

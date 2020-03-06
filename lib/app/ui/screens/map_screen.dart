@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
+import '../../services/geocoder_service.dart';
 
 class MapScreen extends StatefulWidget {
   static String routeName = '/map';
@@ -18,6 +21,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller = Completer();
+  final geocoderService = Modular.get<GeocoderService>();
 
   Set<Marker> _markers = Set();
   Address _location;
@@ -40,12 +44,12 @@ class _MapScreenState extends State<MapScreen> {
         );
     });
 
-    final coordinates = Coordinates(latLng.latitude, latLng.longitude);
-    List<Address> addresses = [];
-
+    Address address;
     try {
-      addresses =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      address = await geocoderService.getAddress(
+        latitude: latLng.latitude,
+        longitude: latLng.longitude,
+      );
     } on PlatformException catch (_) {
       if (mounted == false) return;
 
@@ -62,11 +66,10 @@ class _MapScreenState extends State<MapScreen> {
       });
     }
 
-    if (addresses.length > 0) {
-      var first = addresses.first;
+    if (address != null) {
       setState(
         () {
-          _location = first;
+          _location = address;
           _isGeocoderRequest = false;
         },
       );
@@ -74,9 +77,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   String shortAddress() {
-    return _location != null
-        ? '${_location.locality}, ${_location.thoroughfare}, ${_location.featureName}'
-        : '';
+    return _location != null ? geocoderService.getShortAddress(_location) : '';
   }
 
   @override

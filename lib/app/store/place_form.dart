@@ -9,6 +9,7 @@ import 'package:connectivity/connectivity.dart';
 
 import '../data/db.dart';
 import '../data/db_repository.dart';
+import '../services/geocoder_service.dart';
 
 part 'place_form.g.dart';
 
@@ -16,6 +17,7 @@ class PlaceFormStore = _PlaceFormStore with _$PlaceFormStore;
 
 abstract class _PlaceFormStore with Store implements Disposable {
   final DbDataRepository _repo;
+  final GeocoderService _geocoderService;
   StreamSubscription<ConnectivityResult> _subscription;
 
   @observable
@@ -23,8 +25,9 @@ abstract class _PlaceFormStore with Store implements Disposable {
   get place => _place as Place;
   set place(Place newValue) => _place = newValue;
 
-  _PlaceFormStore({DbDataRepository repo})
-      : _repo = repo ?? DbDataRepository.db() {
+  _PlaceFormStore({DbDataRepository repo, GeocoderService geocoderService})
+      : _repo = repo ?? DbDataRepository.db(),
+        _geocoderService = geocoderService ?? GeocoderService.instance() {
     Connectivity().checkConnectivity().then(_connectivityCb);
 
     _subscription =
@@ -52,12 +55,12 @@ abstract class _PlaceFormStore with Store implements Disposable {
         .toList();
     final latitude = c[0];
     final longitude = c[1];
-    List<Address> locations = [];
 
-    final coordinates = Coordinates(latitude, longitude);
+    Address _location;
+
     try {
-      locations =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      _location = await _geocoderService.getAddress(
+          latitude: latitude, longitude: longitude);
     } on PlatformException catch (_) {
       if (isInternetConnected) {
         locationError = 'Internet connection error, try reload app';
@@ -66,8 +69,8 @@ abstract class _PlaceFormStore with Store implements Disposable {
       locationError = 'Something went wrong, try reload app';
     }
 
-    if (locations.length > 0) {
-      location = locations.first;
+    if (_location != null) {
+      location = _location;
       return;
     }
 
@@ -127,17 +130,36 @@ abstract class _PlaceFormStore with Store implements Disposable {
   @observable
   String locationError;
 
+  @observable
+  String nameFieldError;
+
+  @observable
+  String typeFieldError;
+
   @computed
   String get address => location != null
-      ? '${location.locality}, ${location.thoroughfare}, ${location.featureName}'
+      ? _geocoderService.getShortAddress(location)
       : addressOffline != null ? addressOffline : null;
 
-  bool isFormValid() {
-    return name.length != 0;
+  @action
+  void checkValidation() {
+    nameFieldError = null;
+    typeFieldError = null;
+
+    if (name.length == 0) {
+      nameFieldError = 'This field should\'t be empty';
+    }
+
+    if (type.length == 0) {
+      typeFieldError = 'This field should\'t be empty';
+    }
   }
 
   @action
-  savePlace() {
+  Future<bool> savePlace() async {
+    checkValidation();
+    if (nameFieldError.length > 0 || typeFieldError.length > 0) return false;
+
     final image = imageBase64 != null
         ? imageBase64
         : imageFile != null ? base64Encode(imageFile.readAsBytesSync()) : null;
@@ -147,7 +169,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
         : '${location.coordinates.latitude},${location.coordinates.longitude}';
 
     if (_place != null) {
-      return _repo.updatePlace(
+      await _repo.updatePlace(
         _place.copyWith(
           name: name,
           type: type,
@@ -157,9 +179,10 @@ abstract class _PlaceFormStore with Store implements Disposable {
           coordinates: coordinates,
         ),
       );
+      return true;
     }
 
-    return _repo.createPlace(
+    await _repo.createPlace(
       Place(
         name: name,
         type: type,
@@ -169,5 +192,6 @@ abstract class _PlaceFormStore with Store implements Disposable {
         coordinates: coordinates,
       ),
     );
+    return true;
   }
 }
