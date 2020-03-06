@@ -13,11 +13,27 @@ class Places extends Table {
   DateTimeColumn get date => dateTime().nullable()();
 }
 
+enum EPlaceOrder {
+  ASC,
+  DESC,
+}
+
 @UseDao(tables: [Places])
 class PlacesDao extends DatabaseAccessor<AppDatabase> {
   PlacesDao(AppDatabase db) : super(db);
 
-  Stream<List<Place>> watchAll() => (select(db.places)).watch();
+  Stream<List<Place>> watchAll({
+    EPlaceOrder order = EPlaceOrder.DESC,
+  }) =>
+      (select(db.places)
+            ..orderBy(
+              [
+                (t) => order == EPlaceOrder.DESC
+                    ? OrderingTerm.desc(t.date)
+                    : OrderingTerm.asc(t.date),
+              ],
+            ))
+          .watch();
 
   Future<int> create(Place place) => into(db.places).insert(
         place.copyWith(

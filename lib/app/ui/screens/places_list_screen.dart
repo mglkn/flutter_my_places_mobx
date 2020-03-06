@@ -8,15 +8,28 @@ import '../../data/db_repository.dart';
 import '../../data/db.dart';
 import 'place_form_screen.dart';
 
-class PlacesListScreen extends StatelessWidget {
+class PlacesListScreen extends StatefulWidget {
   static String routeName = '/';
+
+  @override
+  _PlacesListScreenState createState() => _PlacesListScreenState();
+}
+
+class _PlacesListScreenState extends State<PlacesListScreen> {
+  EPlaceOrder order;
+
+  @override
+  void initState() {
+    order = EPlaceOrder.DESC;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBarBuild(),
       body: SafeArea(
-        child: PlacesList(),
+        child: PlacesList(order),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -36,19 +49,51 @@ class PlacesListScreen extends StatelessWidget {
       ),
       centerTitle: true,
       backgroundColor: Colors.grey[100],
+      leading: AppBarLeading(
+        order: order,
+        toggleOrder: _toggleOrder,
+      ),
       elevation: 0.0,
     );
+  }
+
+  _toggleOrder() {
+    setState(() {
+      order = order == EPlaceOrder.ASC ? EPlaceOrder.DESC : EPlaceOrder.ASC;
+    });
+  }
+}
+
+typedef void ToggleOrder();
+
+class AppBarLeading extends StatelessWidget {
+  final EPlaceOrder order;
+  final ToggleOrder toggleOrder;
+
+  AppBarLeading({this.order, this.toggleOrder});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: toggleOrder,
+        child: order == EPlaceOrder.DESC
+            ? Icon(Icons.arrow_downward, color: Colors.grey[600])
+            : Icon(Icons.arrow_upward, color: Colors.grey[600]));
   }
 }
 
 class PlacesList extends StatelessWidget {
+  EPlaceOrder order;
+
+  PlacesList(this.order);
+
   @override
   Widget build(BuildContext context) {
     final repo = Modular.get<DbDataRepository>();
 
     return StreamBuilder<List<Place>>(
       initialData: [],
-      stream: repo.watchPlaces(),
+      stream: repo.watchPlaces(order: order),
       builder: (_, AsyncSnapshot<List<Place>> places) {
         return ListView.builder(
           itemCount: places.data.length,

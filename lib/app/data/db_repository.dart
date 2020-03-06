@@ -3,7 +3,7 @@ import 'dart:async';
 import 'db.dart';
 
 abstract class DbDataRepository {
-  Stream<List<Place>> watchPlaces();
+  Stream<List<Place>> watchPlaces({EPlaceOrder order});
   Future<int> createPlace(Place place);
   Future<bool> updatePlace(Place place);
   Future<int> removePlace(Place place);
@@ -34,7 +34,7 @@ class _DbDataRepository implements DbDataRepository {
   }
 
   @override
-  Stream<List<Place>> watchPlaces() {
-    return _db.placesDao.watchAll();
+  Stream<List<Place>> watchPlaces({EPlaceOrder order}) {
+    return _db.placesDao.watchAll(order: order);
   }
 }

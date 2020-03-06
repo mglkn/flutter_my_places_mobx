@@ -158,7 +158,8 @@ abstract class _PlaceFormStore with Store implements Disposable {
   @action
   Future<bool> savePlace() async {
     checkValidation();
-    if (nameFieldError.length > 0 || typeFieldError.length > 0) return false;
+    if ((nameFieldError != null && nameFieldError.length > 0) ||
+        (typeFieldError != null && typeFieldError.length > 0)) return false;
 
     final image = imageBase64 != null
         ? imageBase64
