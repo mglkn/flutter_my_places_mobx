@@ -110,9 +110,13 @@ class TileAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 30.0,
         child: ClipOval(
-          child: image != null
-              ? Image.memory(base64Decode(image))
-              : Image.asset('assets/images/selectImagePlaceholder.png'),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: image != null
+                ? Image.memory(base64Decode(image), fit: BoxFit.fitHeight)
+                : Image.asset('assets/images/selectImagePlaceholder.png',
+                    fit: BoxFit.fitHeight),
+          ),
         ),
         backgroundColor: Colors.grey[300],
       ),
