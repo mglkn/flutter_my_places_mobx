@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:geocoder/geocoder.dart';
 
 import 'ui/screens/screens.dart';
 
@@ -21,7 +20,6 @@ class AppModule extends MainModule {
             child: (_, __) => PlacesListScreen()),
         Router(PlaceFormScreen.routeName,
             child: (_, args) => PlaceFormScreen(place: args.data)),
-        Router<Address>(MapScreen.routeName, child: (_, __) => MapScreen()),
       ];
 
   @override

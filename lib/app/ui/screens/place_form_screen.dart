@@ -233,8 +233,12 @@ class _AddressInputState extends State<AddressInput> {
                     child: IconButton(
                       icon: Icon(Icons.location_on),
                       onPressed: () async {
-                        final Address location = await Navigator.of(context)
-                            .pushNamed(MapScreen.routeName);
+                        final Address location =
+                            await Navigator.of(context).push(
+                          MaterialPageRoute<Address>(
+                            builder: (_) => MapScreen(),
+                          ),
+                        );
 
                         if (location == null) return;
 
