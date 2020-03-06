@@ -25,6 +25,9 @@ class _MapScreenState extends State<MapScreen> {
   bool _isPontSelecting = false;
 
   _selectPoint(LatLng latLng) async {
+    if (mounted == false) return;
+    _error = '';
+
     setState(() {
       _isPontSelecting = true;
     });
@@ -36,11 +39,15 @@ class _MapScreenState extends State<MapScreen> {
       addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
     } on PlatformException catch (_) {
+      if (mounted == false) return;
+
       setState(() {
         _error = 'Some internet error occured, please reenter in map page';
         _isPontSelecting = false;
       });
     } catch (_) {
+      if (mounted == false) return;
+
       setState(() {
         _error = 'Some error occured, please reenter in map page';
         _isPontSelecting = false;
@@ -89,7 +96,7 @@ class _MapScreenState extends State<MapScreen> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
-            onTap: _selectPoint,
+            onTap: _isPontSelecting ? null : _selectPoint,
             mapType: MapType.normal,
             initialCameraPosition: MapScreen._kGoogleUstug,
             onMapCreated: (GoogleMapController controller) {
