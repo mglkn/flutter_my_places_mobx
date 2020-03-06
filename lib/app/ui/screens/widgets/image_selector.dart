@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -13,8 +14,45 @@ class ImageSelector extends StatelessWidget {
 
   ImageSelector() : _store = Modular.get<PlaceFormStore>();
 
-  Future<void> _selectImage(ImageSource source) async {
-    final File image = await ImagePicker.pickImage(source: source);
+  _showSnackBar({String message, BuildContext context}) {
+    final snackbar = SnackBar(
+      content: Text(message),
+      action: null,
+    );
+
+    Scaffold.of(context).showSnackBar(snackbar);
+  }
+
+  Future<void> _selectImage({ImageSource source, BuildContext context}) async {
+    File image;
+    try {
+      image = await ImagePicker.pickImage(source: source);
+    } on PlatformException catch (error) {
+      if (error.code == 'photo_access_denied') {
+        _showSnackBar(
+          message: 'You have no permission for photo gallery.',
+          context: context,
+        );
+        return;
+      }
+      if (error.code == 'camera_access_denied') {
+        _showSnackBar(
+          message: 'You have no permission for camera.',
+          context: context,
+        );
+        return;
+      }
+
+      _showSnackBar(
+        message: 'Unknown error. Check your permissions',
+        context: context,
+      );
+    } catch (error) {
+      _showSnackBar(
+        message: 'Unknown error. Check your permissions',
+        context: context,
+      );
+    }
 
     if (image == null) return;
 
@@ -31,7 +69,8 @@ class ImageSelector extends StatelessWidget {
               leading: new Icon(Icons.image),
               title: new Text('Photo archive'),
               onTap: () async {
-                await _selectImage(ImageSource.gallery);
+                await _selectImage(
+                    source: ImageSource.gallery, context: context);
                 Navigator.pop(context);
               },
             ),
@@ -39,7 +78,8 @@ class ImageSelector extends StatelessWidget {
               leading: new Icon(Icons.camera),
               title: new Text('Camera'),
               onTap: () async {
-                await _selectImage(ImageSource.camera);
+                await _selectImage(
+                    source: ImageSource.camera, context: context);
                 Navigator.pop(context);
               },
             ),
