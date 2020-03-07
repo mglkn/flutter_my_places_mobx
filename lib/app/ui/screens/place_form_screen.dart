@@ -242,7 +242,7 @@ class _AddressInputState extends State<AddressInput> {
                         final Address location =
                             await Navigator.of(context).push(
                           MaterialPageRoute<Address>(
-                            builder: (_) => MapScreen(),
+                            builder: (_) => MapSelectorScreen(),
                           ),
                         );
 

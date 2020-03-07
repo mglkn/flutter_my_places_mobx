@@ -7,19 +7,17 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../services/geocoder_service.dart';
 
-class MapScreen extends StatefulWidget {
-  static String routeName = '/map';
-
+class MapSelectorScreen extends StatefulWidget {
   static final CameraPosition _kGoogleUstug = CameraPosition(
     target: LatLng(60.767437, 46.307342),
     zoom: 18.4746,
   );
 
   @override
-  _MapScreenState createState() => _MapScreenState();
+  _MapSelectorScreenState createState() => _MapSelectorScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapSelectorScreenState extends State<MapSelectorScreen> {
   final Completer<GoogleMapController> _controller = Completer();
   final geocoderService = Modular.get<GeocoderService>();
 
@@ -101,7 +99,7 @@ class _MapScreenState extends State<MapScreen> {
           GoogleMap(
             onTap: _isGeocoderRequest ? null : _selectPoint,
             mapType: MapType.normal,
-            initialCameraPosition: MapScreen._kGoogleUstug,
+            initialCameraPosition: MapSelectorScreen._kGoogleUstug,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
