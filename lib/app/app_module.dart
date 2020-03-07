@@ -4,7 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'ui/screens/screens.dart';
 
 import 'data/db_repository.dart';
-import 'store/place_form.dart';
+import 'store/stores.dart';
 import 'services/geocoder_service.dart';
 
 class AppModule extends MainModule {
@@ -14,6 +14,7 @@ class AppModule extends MainModule {
         Bind<GeocoderService>((_) => GeocoderService.instance()),
         Bind<PlaceFormStore>(
             (_) => PlaceFormStore(repo: DbDataRepository.db())),
+        Bind<PlaceListStore>((_) => PlaceListStore()),
       ];
 
   @override

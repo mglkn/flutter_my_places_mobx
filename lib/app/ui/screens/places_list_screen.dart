@@ -5,14 +5,16 @@ import 'package:async/async.dart' show StreamGroup;
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:my_places/app/ui/screens/screens.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../data/db_repository.dart';
 import '../../data/db.dart';
-import 'place_form_screen.dart';
+import 'screens.dart';
+import '../../store/stores.dart';
 
 class PlacesListScreen extends StatefulWidget {
   static String routeName = '/';
+  final placeListStore = Modular.get<PlaceListStore>();
 
   @override
   _PlacesListScreenState createState() => _PlacesListScreenState();
@@ -34,12 +36,17 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
       body: SafeArea(
         child: PlacesList(order),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        elevation: 3.0,
-        onPressed: () {
-          Modular.to.pushNamed(PlaceFormScreen.routeName, arguments: null);
-        },
+      floatingActionButton: Observer(
+        builder: (_) => widget.placeListStore.isDismissing
+            ? Container()
+            : FloatingActionButton(
+                child: Icon(Icons.add),
+                elevation: 3.0,
+                onPressed: () {
+                  Modular.to
+                      .pushNamed(PlaceFormScreen.routeName, arguments: null);
+                },
+              ),
       ),
     );
   }
@@ -61,6 +68,7 @@ class _PlacesListScreenState extends State<PlacesListScreen> {
   }
 
   _toggleOrder() {
+    if (widget.placeListStore.isDismissing) return;
     setState(() {
       order = order == EPlaceOrder.ASC ? EPlaceOrder.DESC : EPlaceOrder.ASC;
     });
@@ -117,6 +125,7 @@ class DismissibleWrapper extends StatefulWidget {
   final repo = Modular.get<DbDataRepository>();
   final deleteDelay = const Duration(milliseconds: 3000);
   final showSnackBarDelay = const Duration(milliseconds: 2700);
+  final placeListStore = Modular.get<PlaceListStore>();
 
   DismissibleWrapper({this.key, this.child, this.place});
 
@@ -142,6 +151,8 @@ class _DismissibleWrapperState extends State<DismissibleWrapper> {
   // through `streamControllerCancel.sink.add(null)`
   Future<bool> _onDismissed(_) async {
     _closeStreams();
+
+    widget.placeListStore.isDismissing = true;
 
     streamControllerCancel = StreamController<bool>();
     streamControllerDone = StreamController<bool>();
@@ -171,6 +182,8 @@ class _DismissibleWrapperState extends State<DismissibleWrapper> {
     if (resultDesision) {
       await widget.repo.removePlace(widget.place);
     }
+
+    widget.placeListStore.isDismissing = false;
 
     return resultDesision;
   }
