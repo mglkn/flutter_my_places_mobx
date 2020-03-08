@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -94,7 +93,9 @@ class ImageSelector extends StatelessWidget {
   _imageTapHandler(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
 
-    if (currentFocus.hasFocus) {
+    print(currentFocus.hasPrimaryFocus);
+
+    if (currentFocus.hasFocus && !currentFocus.hasPrimaryFocus) {
       currentFocus.unfocus();
       return;
     }
@@ -115,7 +116,11 @@ class ImageSelector extends StatelessWidget {
           builder: (_) {
             return Stack(
               children: <Widget>[
-                Center(child: _getImage()),
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: _getImage(),
+                ),
                 Align(
                   alignment: Alignment(.8, .7),
                   child: _store.location == null ||
