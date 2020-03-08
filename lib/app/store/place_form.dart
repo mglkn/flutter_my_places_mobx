@@ -48,13 +48,14 @@ abstract class _PlaceFormStore with Store implements Disposable {
     _subscription.cancel();
   }
 
+  List<double> _coordinatesFromString(String s) =>
+      s.split(',').map<double>((String s) => double.parse(s)).toList();
+
   _setLocation() async {
-    final c = _place.coordinates
-        .split(',')
-        .map<double>((String s) => double.parse(s))
-        .toList();
-    final latitude = c[0];
-    final longitude = c[1];
+    final coordinates = _coordinatesFromString(_place.coordinates);
+
+    final latitude = coordinates[0];
+    final longitude = coordinates[1];
 
     Address _location;
 

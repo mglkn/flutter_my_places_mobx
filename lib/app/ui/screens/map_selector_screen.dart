@@ -99,6 +99,7 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
           GoogleMap(
             onTap: _isGeocoderRequest ? null : _selectPoint,
             mapType: MapType.normal,
+            myLocationEnabled: true,
             initialCameraPosition: MapSelectorScreen._kGoogleUstug,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
