@@ -17,7 +17,7 @@ dependencies:
   geocoder: ^0.2.1
   flutter_rating_bar: ^3.0.1+1
   connectivity: ^0.4.8+1
-  geolocator: ^5.3.0
+  location: ^2.5.3
 
   cupertino_icons: ^0.1.2
 

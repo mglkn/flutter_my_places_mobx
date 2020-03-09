@@ -8,10 +8,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../services/geo.dart';
 
 class MapSelectorScreen extends StatefulWidget {
-  static final CameraPosition _kGoogleUstug = CameraPosition(
-    target: LatLng(60.767437, 46.307342),
-    zoom: 18.4746,
-  );
+  final geoService = Modular.get<GeoService>();
 
   @override
   _MapSelectorScreenState createState() => _MapSelectorScreenState();
@@ -19,16 +16,43 @@ class MapSelectorScreen extends StatefulWidget {
 
 class _MapSelectorScreenState extends State<MapSelectorScreen> {
   final Completer<GoogleMapController> _controller = Completer();
-  final geoService = Modular.get<GeoService>();
 
   Set<Marker> _markers = Set();
   Address _location;
   String _error;
   bool _isGeocoderRequest = false;
+  LatLng _currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _setCurrentLocation();
+  }
+
+  _setCurrentLocation() async {
+    try {
+      final _location = await widget.geoService.getCurrentLocation();
+
+      setState(() {
+        _currentLocation = _location;
+      });
+
+      if (_currentLocation == null) {
+        setState(() {
+          _error =
+              'I can`t get your current position, try reload app or check permission your app.';
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _error = error.toString();
+      });
+    }
+  }
 
   _selectPoint(LatLng latLng) async {
     if (mounted == false) return;
-    _error = '';
+    _error = null;
 
     setState(() {
       _isGeocoderRequest = true;
@@ -44,7 +68,7 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
 
     Address address;
     try {
-      address = await geoService.getAddress(
+      address = await widget.geoService.getAddress(
         latitude: latLng.latitude,
         longitude: latLng.longitude,
       );
@@ -75,7 +99,9 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
   }
 
   String shortAddress() {
-    return _location != null ? geoService.getShortAddress(_location) : '';
+    return _location != null
+        ? widget.geoService.getShortAddress(_location)
+        : '';
   }
 
   @override
@@ -94,22 +120,31 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
                     Navigator.of(context).pop(_location);
                   },
                 ),
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(
-            onTap: _isGeocoderRequest ? null : _selectPoint,
-            mapType: MapType.normal,
-            myLocationEnabled: true,
-            initialCameraPosition: MapSelectorScreen._kGoogleUstug,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
-            markers: _markers,
-          ),
-          _location != null ? Info(shortAddress()) : Container(),
-          _error != null && _error.length > 0 ? Info(_error) : Container(),
-        ],
-      ),
+      body: _error != null
+          ? _ErrorMessage(_error)
+          : Stack(
+              children: <Widget>[
+                _currentLocation != null
+                    ? GoogleMap(
+                        onTap: _isGeocoderRequest ? null : _selectPoint,
+                        mapType: MapType.normal,
+                        myLocationEnabled: true,
+                        initialCameraPosition: CameraPosition(
+                          target: _currentLocation,
+                          zoom: 16.0,
+                        ),
+                        onMapCreated: (GoogleMapController controller) {
+                          _controller.complete(controller);
+                        },
+                        markers: _markers,
+                      )
+                    : _ProgressIndicator(),
+                _location != null ? Info(shortAddress()) : Container(),
+                _error != null && _error.length > 0
+                    ? Info(_error)
+                    : Container(),
+              ],
+            ),
     );
   }
 
@@ -139,6 +174,40 @@ class Info extends StatelessWidget {
       color: Colors.white,
       child: Center(
         child: Text(text),
+      ),
+    );
+  }
+}
+
+class _ErrorMessage extends StatelessWidget {
+  final String message;
+
+  _ErrorMessage(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Center(
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 20.0,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

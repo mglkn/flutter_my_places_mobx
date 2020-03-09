@@ -1,14 +1,17 @@
 import 'dart:async';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
+import '../../services/geo.dart';
 
 // i don't use Directions API becouse it requires billing enabled;
 // TODO: instead this screen open google maps with requires path;
 class MapPathScreen extends StatefulWidget {
   final Coordinates destination;
+  final geoService = Modular.get<GeoService>();
 
   MapPathScreen(this.destination) : assert(destination != null);
 
@@ -21,62 +24,62 @@ class _MapPathScreenState extends State<MapPathScreen> {
 
   final Set<Marker> _markers = Set();
   Set<Polyline> _polylines = Set();
-  LatLng currentLocation;
-  String error;
+  LatLng _currentLocation;
+  String _error;
 
   @override
   void initState() {
-    _init();
     super.initState();
+    _setLocations();
   }
 
-  _init() async {
-    Position currentPosition;
-    try {
-      currentPosition = await Geolocator().getCurrentPosition();
-    } catch (e) {
-      error =
-          'Error occured with get current location. Try reload app and check internet connection.';
-    }
-
-    if (currentPosition == null) return;
-
-    final _currentLocation =
-        LatLng(currentPosition.latitude, currentPosition.longitude);
-
+  _setLocations() async {
     final destination =
         LatLng(widget.destination.latitude, widget.destination.longitude);
+    try {
+      final _location = await widget.geoService.getCurrentLocation();
 
-    setState(() {
-      currentLocation = _currentLocation;
+      setState(() {
+        _currentLocation = _location;
 
-      final polyline = Polyline(
-        polylineId: PolylineId('__polyline__'),
-        visible: true,
-        points: [
-          currentLocation,
-          destination,
-        ],
-        color: Colors.blue,
-      );
+        final polyline = Polyline(
+          polylineId: PolylineId('__polyline__'),
+          visible: true,
+          points: [
+            _currentLocation,
+            destination,
+          ],
+          color: Colors.blue,
+        );
 
-      _polylines = {polyline};
-    });
+        _polylines = {polyline};
+      });
+    } catch (error) {
+      setState(() {
+        _error = error.toString();
+      });
+    }
+
+    if (_currentLocation == null) {
+      setState(() {
+        _error =
+            'I can`t get your current position, try reload app or check permission your app.';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBarBuild(),
-      body: error != null
-          ? ErrorMessage(error)
-          : currentLocation == null
+      body: _error != null
+          ? ErrorMessage(_error)
+          : _currentLocation == null
               ? ProgressIndicator()
               : GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(
-                        currentLocation.latitude, currentLocation.longitude),
+                    target: _currentLocation,
                     zoom: 15.0,
                   ),
                   myLocationEnabled: true,
