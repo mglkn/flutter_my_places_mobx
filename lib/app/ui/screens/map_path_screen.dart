@@ -56,12 +56,14 @@ class _MapPathScreenState extends State<MapPathScreen> {
         _polylines = {polyline};
       });
     } catch (error) {
+      if (mounted == false) return;
       setState(() {
         _error = error.toString();
       });
     }
 
     if (_currentLocation == null) {
+      if (mounted == false) return;
       setState(() {
         _error =
             'I can`t get your current position, try reload app or check permission your app.';
