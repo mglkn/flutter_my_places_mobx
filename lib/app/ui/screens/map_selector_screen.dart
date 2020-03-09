@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ProgressIndicator;
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../services/geo.dart';
+import 'widgets/widgets.dart';
 
 class MapSelectorScreen extends StatefulWidget {
   final geoService = Modular.get<GeoService>();
@@ -121,7 +122,7 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
                   },
                 ),
       body: _error != null
-          ? _ErrorMessage(_error)
+          ? MapErrorMessage(_error)
           : Stack(
               children: <Widget>[
                 _currentLocation != null
@@ -138,10 +139,10 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
                         },
                         markers: _markers,
                       )
-                    : _ProgressIndicator(),
-                _location != null ? Info(shortAddress()) : Container(),
+                    : ProgressIndicator(),
+                _location != null ? _Message(shortAddress()) : Container(),
                 _error != null && _error.length > 0
-                    ? Info(_error)
+                    ? _Message(_error)
                     : Container(),
               ],
             ),
@@ -162,9 +163,9 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
   }
 }
 
-class Info extends StatelessWidget {
+class _Message extends StatelessWidget {
   final String text;
-  Info(this.text) : assert(text != null);
+  _Message(this.text) : assert(text != null);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -174,40 +175,6 @@ class Info extends StatelessWidget {
       color: Colors.white,
       child: Center(
         child: Text(text),
-      ),
-    );
-  }
-}
-
-class _ErrorMessage extends StatelessWidget {
-  final String message;
-
-  _ErrorMessage(this.message);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Center(
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 20.0,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProgressIndicator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: CircularProgressIndicator(),
       ),
     );
   }

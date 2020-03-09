@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ProgressIndicator;
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../services/geo.dart';
+import 'widgets/widgets.dart';
 
 // i don't use Directions API becouse it requires billing enabled;
 // TODO: instead this screen open google maps with requires path;
@@ -73,7 +74,7 @@ class _MapPathScreenState extends State<MapPathScreen> {
     return Scaffold(
       appBar: _appBarBuild(),
       body: _error != null
-          ? ErrorMessage(_error)
+          ? MapErrorMessage(_error)
           : _currentLocation == null
               ? ProgressIndicator()
               : GoogleMap(
@@ -99,40 +100,6 @@ class _MapPathScreenState extends State<MapPathScreen> {
       backgroundColor: Colors.grey[100],
       iconTheme: IconThemeData(color: Colors.grey[700]),
       elevation: 0.0,
-    );
-  }
-}
-
-class ErrorMessage extends StatelessWidget {
-  final String message;
-
-  ErrorMessage(this.message);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Center(
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 20.0,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ProgressIndicator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
     );
   }
 }

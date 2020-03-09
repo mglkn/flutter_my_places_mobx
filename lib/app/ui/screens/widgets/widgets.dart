@@ -5,3 +5,5 @@ export 'name_input.dart';
 export 'type_input.dart';
 export 'address_input.dart';
 export 'rating_input.dart';
+export 'map_error_message.dart';
+export 'progress_indicator.dart';
