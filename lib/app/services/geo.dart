@@ -1,16 +1,16 @@
 import 'package:geocoder/geocoder.dart';
 
-abstract class GeocoderService {
+abstract class GeoService {
   Future<Address> getAddress({double latitude, double longitude});
   String getShortAddress(Address location);
 
-  factory GeocoderService.instance() => _GeocoderService();
+  factory GeoService.instance() => _GeoService();
 }
 
-class _GeocoderService implements GeocoderService {
-  _GeocoderService._internal();
-  static final _GeocoderService _instance = _GeocoderService._internal();
-  factory _GeocoderService() => _instance;
+class _GeoService implements GeoService {
+  _GeoService._internal();
+  static final _GeoService _instance = _GeoService._internal();
+  factory _GeoService() => _instance;
 
   @override
   Future<Address> getAddress({double latitude, double longitude}) async {

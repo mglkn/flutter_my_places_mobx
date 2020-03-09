@@ -5,13 +5,13 @@ import 'ui/screens/screens.dart';
 
 import 'data/db_repository.dart';
 import 'store/stores.dart';
-import 'services/geocoder_service.dart';
+import 'services/geo.dart';
 
 class AppModule extends MainModule {
   @override
   List<Bind> get binds => [
         Bind<DbDataRepository>((_) => DbDataRepository.db()),
-        Bind<GeocoderService>((_) => GeocoderService.instance()),
+        Bind<GeoService>((_) => GeoService.instance()),
         Bind<PlaceFormStore>(
             (_) => PlaceFormStore(repo: DbDataRepository.db())),
         Bind<PlaceListStore>((_) => PlaceListStore()),

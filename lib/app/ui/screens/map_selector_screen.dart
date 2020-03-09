@@ -5,7 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../services/geocoder_service.dart';
+import '../../services/geo.dart';
 
 class MapSelectorScreen extends StatefulWidget {
   static final CameraPosition _kGoogleUstug = CameraPosition(
@@ -19,7 +19,7 @@ class MapSelectorScreen extends StatefulWidget {
 
 class _MapSelectorScreenState extends State<MapSelectorScreen> {
   final Completer<GoogleMapController> _controller = Completer();
-  final geocoderService = Modular.get<GeocoderService>();
+  final geoService = Modular.get<GeoService>();
 
   Set<Marker> _markers = Set();
   Address _location;
@@ -44,7 +44,7 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
 
     Address address;
     try {
-      address = await geocoderService.getAddress(
+      address = await geoService.getAddress(
         latitude: latLng.latitude,
         longitude: latLng.longitude,
       );
@@ -75,7 +75,7 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
   }
 
   String shortAddress() {
-    return _location != null ? geocoderService.getShortAddress(_location) : '';
+    return _location != null ? geoService.getShortAddress(_location) : '';
   }
 
   @override

@@ -9,7 +9,7 @@ import 'package:connectivity/connectivity.dart';
 
 import '../data/db.dart';
 import '../data/db_repository.dart';
-import '../services/geocoder_service.dart';
+import '../services/geo.dart';
 
 part 'place_form.g.dart';
 
@@ -17,7 +17,7 @@ class PlaceFormStore = _PlaceFormStore with _$PlaceFormStore;
 
 abstract class _PlaceFormStore with Store implements Disposable {
   final DbDataRepository _repo;
-  final GeocoderService _geocoderService;
+  final GeoService _geoService;
   StreamSubscription<ConnectivityResult> _subscription;
 
   @observable
@@ -25,9 +25,9 @@ abstract class _PlaceFormStore with Store implements Disposable {
   get place => _place as Place;
   set place(Place newValue) => _place = newValue;
 
-  _PlaceFormStore({DbDataRepository repo, GeocoderService geocoderService})
+  _PlaceFormStore({DbDataRepository repo, GeoService geoService})
       : _repo = repo ?? DbDataRepository.db(),
-        _geocoderService = geocoderService ?? GeocoderService.instance() {
+        _geoService = geoService ?? GeoService.instance() {
     Connectivity().checkConnectivity().then(_connectivityCb);
 
     _subscription =
@@ -60,7 +60,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
     Address _location;
 
     try {
-      _location = await _geocoderService.getAddress(
+      _location = await _geoService.getAddress(
           latitude: latitude, longitude: longitude);
     } on PlatformException catch (_) {
       if (isInternetConnected) {
@@ -139,7 +139,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
   @computed
   String get address => location != null
-      ? _geocoderService.getShortAddress(location)
+      ? _geoService.getShortAddress(location)
       : addressOffline != null ? addressOffline : null;
 
   @action
