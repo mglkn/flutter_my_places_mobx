@@ -11,9 +11,7 @@ import '../../../store/place_form.dart';
 import '../../screens/screens.dart';
 
 class ImageSelector extends StatelessWidget {
-  final PlaceFormStore _store;
-
-  ImageSelector() : _store = Modular.get<PlaceFormStore>();
+  final PlaceFormStore placeFormStore = Modular.get<PlaceFormStore>();
 
   _showSnackBar({String message, BuildContext context}) {
     final snackbar = SnackBar(
@@ -57,7 +55,7 @@ class ImageSelector extends StatelessWidget {
 
     if (image == null) return;
 
-    _store.imageFile = image;
+    placeFormStore.imageFile = image;
   }
 
   _showModalBottomSheet(BuildContext context) {
@@ -93,8 +91,6 @@ class ImageSelector extends StatelessWidget {
   _imageTapHandler(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
 
-    print(currentFocus.hasPrimaryFocus);
-
     if (currentFocus.hasFocus && !currentFocus.hasPrimaryFocus) {
       currentFocus.unfocus();
       return;
@@ -119,12 +115,15 @@ class ImageSelector extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   height: double.infinity,
-                  child: _getImage(),
+                  child: Hero(
+                    tag: 'image_${placeFormStore.place?.id}',
+                    child: _getImage(),
+                  ),
                 ),
                 Align(
                   alignment: Alignment(.8, .7),
-                  child: _store.location == null ||
-                          _store.isInternetConnected == false
+                  child: placeFormStore.location == null ||
+                          placeFormStore.isInternetConnected == false
                       ? Container()
                       : IconButton(
                           icon: Icon(
@@ -156,14 +155,14 @@ class ImageSelector extends StatelessWidget {
   }
 
   Widget _getImage() {
-    return _store.imageFile != null
+    return placeFormStore.imageFile != null
         ? Image.file(
-            _store.imageFile,
+            placeFormStore.imageFile,
             fit: BoxFit.fitWidth,
           )
-        : _store.imageBase64 != null
+        : placeFormStore.imageBase64 != null
             ? Image.memory(
-                base64Decode(_store.imageBase64),
+                base64Decode(placeFormStore.imageBase64),
                 fit: BoxFit.fitWidth,
               )
             : Image.asset(

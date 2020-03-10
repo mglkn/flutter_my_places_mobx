@@ -32,7 +32,7 @@ class PlaceTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            _TileAvatar(place.image),
+            _TileAvatar(image: place.image, id: place.id),
             Expanded(
               child: _TileContent(place),
             ),
@@ -46,8 +46,9 @@ class PlaceTile extends StatelessWidget {
 
 class _TileAvatar extends StatelessWidget {
   final String image;
+  final int id;
 
-  _TileAvatar(this.image);
+  _TileAvatar({this.id, this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +59,15 @@ class _TileAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 30.0,
         child: ClipOval(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: image != null
-                ? Image.memory(base64Decode(image), fit: BoxFit.fitHeight)
-                : Image.asset('assets/images/selectImagePlaceholder.png',
-                    fit: BoxFit.fitHeight),
+          child: Hero(
+            tag: 'image_${id}',
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: image != null
+                  ? Image.memory(base64Decode(image), fit: BoxFit.fitHeight)
+                  : Image.asset('assets/images/selectImagePlaceholder.png',
+                      fit: BoxFit.fitHeight),
+            ),
           ),
         ),
         backgroundColor: Colors.grey[300],
