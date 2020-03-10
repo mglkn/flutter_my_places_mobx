@@ -78,7 +78,9 @@ class _TileImage extends StatelessWidget {
 
 class _FileImage extends StatefulWidget {
   final String imagePath;
+
   _FileImage(this.imagePath) : assert(imagePath != null);
+
   @override
   __FileImageState createState() => __FileImageState();
 }

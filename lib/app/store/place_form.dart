@@ -158,7 +158,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
     if ((nameFieldError != null && nameFieldError.length > 0) ||
         (typeFieldError != null && typeFieldError.length > 0)) return false;
 
-    final image = imageFile?.path.toString();
+    final image = imageFile?.path;
 
     final String coordinates = location == null
         ? null

@@ -46,8 +46,10 @@ abstract class _PlaceListStore with Store implements Disposable {
 
   setPlacesStream() {
     _placesStream?.cancel();
-    _placesStream = _repo
-        .watchPlaces(order: order)
-        .listen((List<Place> places) => _places = ObservableList.of(places));
+    _placesStream =
+        _repo.watchPlaces(order: order).listen((List<Place> places) {
+      if (isDismissing) return;
+      _places = ObservableList.of(places);
+    });
   }
 }
