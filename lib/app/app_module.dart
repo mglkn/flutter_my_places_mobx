@@ -14,7 +14,7 @@ class AppModule extends MainModule {
         Bind<GeoService>((_) => GeoService.instance()),
         Bind<PlaceFormStore>(
             (_) => PlaceFormStore(repo: DbDataRepository.db())),
-        Bind<PlaceListStore>((_) => PlaceListStore()),
+        Bind<PlaceListStore>((_) => PlaceListStore(null)),
       ];
 
   @override
@@ -36,6 +36,7 @@ class App extends StatelessWidget {
       title: 'My Places',
 
       debugShowCheckedModeBanner: false,
+      // showPerformanceOverlay: true,
 
       // Routes
       initialRoute: '/',
