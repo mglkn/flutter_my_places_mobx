@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -48,7 +48,7 @@ class _TileImage extends StatelessWidget {
   final String image;
   final int id;
 
-  _TileImage({this.id, this.image});
+  _TileImage({this.id, this.image}) : assert(id != null);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class _TileImage extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1,
               child: image != null
-                  ? Image.memory(base64Decode(image), fit: BoxFit.fitWidth)
+                  ? _FileImage(image)
                   : Image.asset('assets/images/selectImagePlaceholder.png',
                       fit: BoxFit.fitHeight),
             ),
@@ -73,6 +73,41 @@ class _TileImage extends StatelessWidget {
         backgroundColor: Colors.grey[300],
       ),
     );
+  }
+}
+
+class _FileImage extends StatefulWidget {
+  final String imagePath;
+  _FileImage(this.imagePath) : assert(imagePath != null);
+  @override
+  __FileImageState createState() => __FileImageState();
+}
+
+class __FileImageState extends State<_FileImage> {
+  bool _isExist = true;
+  File image;
+
+  @override
+  void initState() {
+    image = File(widget.imagePath);
+    _checkPathExist();
+    super.initState();
+  }
+
+  Future _checkPathExist() async {
+    final isExist = await File(widget.imagePath).exists();
+    setState(() {
+      _isExist = isExist;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isExist
+        ? Image.file(File(widget.imagePath), fit: BoxFit.fitWidth)
+        // TODO: chanage placeholder to 'image not exist';
+        : Image.asset('assets/images/selectImagePlaceholder.png',
+            fit: BoxFit.fitHeight);
   }
 }
 

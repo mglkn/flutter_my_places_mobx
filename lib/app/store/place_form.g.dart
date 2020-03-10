@@ -137,23 +137,6 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
     }, _$imageFileAtom, name: '${_$imageFileAtom.name}_set');
   }
 
-  final _$imageBase64Atom = Atom(name: '_PlaceFormStore.imageBase64');
-
-  @override
-  String get imageBase64 {
-    _$imageBase64Atom.context.enforceReadPolicy(_$imageBase64Atom);
-    _$imageBase64Atom.reportObserved();
-    return super.imageBase64;
-  }
-
-  @override
-  set imageBase64(String value) {
-    _$imageBase64Atom.context.conditionallyRunInAction(() {
-      super.imageBase64 = value;
-      _$imageBase64Atom.reportChanged();
-    }, _$imageBase64Atom, name: '${_$imageBase64Atom.name}_set');
-  }
-
   final _$rateAtom = Atom(name: '_PlaceFormStore.rate');
 
   @override
@@ -245,7 +228,7 @@ mixin _$PlaceFormStore on _PlaceFormStore, Store {
   @override
   String toString() {
     final string =
-        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},imageBase64: ${imageBase64.toString()},rate: ${rate.toString()},locationError: ${locationError.toString()},nameFieldError: ${nameFieldError.toString()},typeFieldError: ${typeFieldError.toString()},address: ${address.toString()}';
+        'isInternetConnected: ${isInternetConnected.toString()},name: ${name.toString()},type: ${type.toString()},location: ${location.toString()},addressOffline: ${addressOffline.toString()},imageFile: ${imageFile.toString()},rate: ${rate.toString()},locationError: ${locationError.toString()},nameFieldError: ${nameFieldError.toString()},typeFieldError: ${typeFieldError.toString()},address: ${address.toString()}';
     return '{$string}';
   }
 }

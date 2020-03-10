@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -160,14 +159,9 @@ class ImageSelector extends StatelessWidget {
             placeFormStore.imageFile,
             fit: BoxFit.fitWidth,
           )
-        : placeFormStore.imageBase64 != null
-            ? Image.memory(
-                base64Decode(placeFormStore.imageBase64),
-                fit: BoxFit.fitWidth,
-              )
-            : Image.asset(
-                'assets/images/selectImagePlaceholder.png',
-                fit: BoxFit.fitHeight,
-              );
+        : Image.asset(
+            'assets/images/selectImagePlaceholder.png',
+            fit: BoxFit.fitHeight,
+          );
   }
 }

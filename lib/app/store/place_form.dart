@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -86,7 +85,6 @@ abstract class _PlaceFormStore with Store implements Disposable {
       name = '';
       type = '';
       rate = 0;
-      imageBase64 = null;
       imageFile = null;
       location = null;
       return;
@@ -101,9 +99,8 @@ abstract class _PlaceFormStore with Store implements Disposable {
     name = _place.name;
     type = _place.type;
     rate = _place.rate;
-    imageFile = null;
+    imageFile = _place.image != null ? File(_place.image) : null;
     location = null;
-    imageBase64 = _place.image;
   }
 
   @observable
@@ -123,9 +120,6 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
   @observable
   File imageFile;
-
-  @observable
-  String imageBase64;
 
   @observable
   int rate;
@@ -164,9 +158,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
     if ((nameFieldError != null && nameFieldError.length > 0) ||
         (typeFieldError != null && typeFieldError.length > 0)) return false;
 
-    final image = imageBase64 != null
-        ? imageBase64
-        : imageFile != null ? base64Encode(imageFile.readAsBytesSync()) : null;
+    final image = imageFile?.path.toString();
 
     final String coordinates = location == null
         ? null
