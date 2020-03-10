@@ -101,6 +101,8 @@ abstract class _PlaceFormStore with Store implements Disposable {
     name = _place.name;
     type = _place.type;
     rate = _place.rate;
+    imageFile = null;
+    location = null;
     imageBase64 = _place.image;
   }
 
