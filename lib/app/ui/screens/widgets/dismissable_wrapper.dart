@@ -8,13 +8,14 @@ import '../../../data/db.dart';
 import '../../../data/db_repository.dart';
 import '../../../store/stores.dart';
 
+// TODO: revise (ui or code) for more comfortable dismiss
 class DismissibleWrapper extends StatefulWidget {
   final Widget child;
   final Place place;
   final Key key;
   final repo = Modular.get<DbDataRepository>();
-  final deleteDelay = const Duration(milliseconds: 3000);
-  final showSnackBarDelay = const Duration(milliseconds: 2700);
+  final deleteDelay = const Duration(milliseconds: 2000);
+  final showSnackBarDelay = const Duration(milliseconds: 1700);
   final placeListStore = Modular.get<PlaceListStore>();
 
   DismissibleWrapper({this.key, this.child, this.place});
@@ -40,6 +41,7 @@ class _DismissibleWrapperState extends State<DismissibleWrapper> {
   // `Cancel` stream pass `false` and can called
   // through `streamControllerCancel.sink.add(null)`
   Future<bool> _onDismissed(_) async {
+    if (widget.placeListStore.isDismissing) return false;
     _closeStreams();
 
     widget.placeListStore.isDismissing = true;
