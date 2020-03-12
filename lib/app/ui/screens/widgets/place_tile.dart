@@ -87,26 +87,28 @@ class _FileImage extends StatefulWidget {
 
 class __FileImageState extends State<_FileImage> {
   bool _isExist = true;
-  File image;
+  File _image;
 
   @override
   void initState() {
-    image = File(widget.imagePath);
-    _checkPathExist();
+    _setImage();
     super.initState();
   }
 
-  Future _checkPathExist() async {
-    final isExist = await File(widget.imagePath).exists();
+  Future _setImage() async {
+    final image = File(widget.imagePath);
+    final isExist = await image.exists();
+
     setState(() {
       _isExist = isExist;
+      _image = image;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isExist
-        ? Image.file(File(widget.imagePath), fit: BoxFit.fitWidth)
+    return _isExist && _image != null
+        ? Image.file(_image, fit: BoxFit.fitWidth)
         // TODO: chanage placeholder to 'image not exist';
         : Image.asset('assets/images/selectImagePlaceholder.png',
             fit: BoxFit.fitHeight);

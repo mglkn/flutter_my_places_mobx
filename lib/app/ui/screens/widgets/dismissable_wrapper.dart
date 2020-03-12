@@ -35,16 +35,8 @@ class _DismissibleWrapperState extends State<DismissibleWrapper> {
     streamControllerDone?.close();
   }
 
-  // Create two streams (done and cancel), merge them and
-  // evaluate merged stream as Future.
-  // `Done` stream with delay and pass `true` value.
-  // `Cancel` stream pass `false` and can called
-  // through `streamControllerCancel.sink.add(null)`
-  Future<bool> _onDismissed(_) async {
-    if (widget.placeListStore.isDismissing) return false;
+  Stream<bool> _createStreams() {
     _closeStreams();
-
-    widget.placeListStore.isDismissing = true;
 
     streamControllerCancel = StreamController<bool>();
     streamControllerDone = StreamController<bool>();
@@ -55,11 +47,23 @@ class _DismissibleWrapperState extends State<DismissibleWrapper> {
       return true;
     });
 
-    bool resultDesision;
-    resultStream = StreamGroup.merge<bool>([streamDone, streamCancel])
+    return StreamGroup.merge<bool>([streamDone, streamCancel])
         .take(1)
-        .asBroadcastStream()
-        .listen(
+        .asBroadcastStream();
+  }
+
+  // Create two streams (done and cancel), merge them and
+  // evaluate merged stream as Future.
+  // `Done` stream with delay and pass `true` value.
+  // `Cancel` stream pass `false` and can called
+  // through `streamControllerCancel.sink.add(null)`
+  Future<bool> _onDismissed(_) async {
+    if (widget.placeListStore.isDismissing) return false;
+
+    widget.placeListStore.isDismissing = true;
+
+    bool resultDesision;
+    resultStream = _createStreams().listen(
       (bool desision) {
         resultDesision = desision;
       },
