@@ -1,6 +1,7 @@
 import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 abstract class GeoService {
   Future<Address> getAddress({double latitude, double longitude});
@@ -58,7 +59,12 @@ class _GeoService implements GeoService {
         }
       }
 
-      final _locationData = await location.getLocation();
+      print('before');
+
+      // final _locationData = await location.getLocation();
+      final _locationData = await Geolocator().getCurrentPosition();
+
+      print('after');
 
       return LatLng(_locationData.latitude, _locationData.longitude);
     } catch (_) {
