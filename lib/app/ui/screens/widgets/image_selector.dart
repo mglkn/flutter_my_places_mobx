@@ -5,12 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:my_places/app/services/image.dart';
 
 import '../../../store/place_form.dart';
 import '../../screens/screens.dart';
 
 class ImageSelector extends StatelessWidget {
   final PlaceFormStore placeFormStore = Modular.get<PlaceFormStore>();
+  final ImageService imageService = Modular.get<ImageService>();
 
   _showSnackBar({String message, BuildContext context}) {
     final snackbar = SnackBar(
@@ -24,7 +26,7 @@ class ImageSelector extends StatelessWidget {
   Future<void> _selectImage({ImageSource source, BuildContext context}) async {
     File image;
     try {
-      image = await ImagePicker.pickImage(source: source);
+      image = await imageService.pickImage(source);
     } on PlatformException catch (error) {
       if (error.code == 'photo_access_denied') {
         _showSnackBar(
