@@ -20,12 +20,14 @@ dependencies:
   location: ^2.5.3
   geolocator: ^5.3.0
   path_provider: ^1.6.5
+  nanoid: ^0.1.0
 
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
-  flutter_test:
+  flutter_driver:
     sdk: flutter
+  test: any
   build_runner: any
   mobx_codegen: ^1.0.2
   moor_generator: ^2.4.0
