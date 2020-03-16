@@ -59,12 +59,7 @@ class _GeoService implements GeoService {
         }
       }
 
-      print('before');
-
-      // final _locationData = await location.getLocation();
       final _locationData = await Geolocator().getCurrentPosition();
-
-      print('after');
 
       return LatLng(_locationData.latitude, _locationData.longitude);
     } catch (_) {
