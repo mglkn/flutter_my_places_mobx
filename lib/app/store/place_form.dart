@@ -42,9 +42,11 @@ abstract class _PlaceFormStore with Store implements Disposable {
   void _connectivityCb(ConnectivityResult connectivityResult) {
     if (connectivityResult == ConnectivityResult.none) {
       isInternetConnected = false;
+      locationError = 'Can\'t select. No internet connection.';
       return;
     }
 
+    locationError = null;
     isInternetConnected = true;
   }
 
