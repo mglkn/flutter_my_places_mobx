@@ -109,77 +109,96 @@ class ImageSelector extends StatelessWidget {
         width: double.infinity,
         height: 200.0,
         color: Colors.grey[200],
-        child: Observer(
-          builder: (_) {
-            return Stack(
-              children: <Widget>[
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Hero(
-                    tag: 'image_${placeFormStore.place?.id}',
-                    child: _getImage(),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(.8, .7),
-                  child: placeFormStore.location == null ||
-                          placeFormStore.isInternetConnected == false
-                      ? Container()
-                      : IconButton(
-                          icon: Icon(
-                            Icons.place,
-                            size: 50.0,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () {
-                            final placeStore = Modular.get<PlaceFormStore>();
+        child: Stack(
+          children: <Widget>[
+            _ImagePlace(),
+            _ToMapPathButton(),
+            _ImageErrorMessage(),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                            if (placeStore.location == null) return;
+class _ToMapPathButton extends StatelessWidget {
+  final placeFormStore = Modular.get<PlaceFormStore>();
 
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => MapPathScreen(
-                                  placeStore.location.coordinates,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                ),
-                placeFormStore.imageError == null
-                    ? Container()
-                    : _imageErrorMessage(placeFormStore.imageError)
-              ],
-            );
-          },
+  void _navigateToMapPathScreen(BuildContext context) {
+    if (placeFormStore.location == null) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MapPathScreen(
+          placeFormStore.location.coordinates,
         ),
       ),
     );
   }
 
-  Widget _imageErrorMessage(String message) {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment(.8, .7),
+      child: placeFormStore.location == null ||
+              placeFormStore.isInternetConnected == false
+          ? Container()
+          : IconButton(
+              icon: Icon(
+                Icons.place,
+                size: 50.0,
+                color: Colors.blue,
+              ),
+              onPressed: () => _navigateToMapPathScreen(context),
+            ),
+    );
+  }
+}
+
+class _ImagePlace extends StatelessWidget {
+  final placeFormStore = Modular.get<PlaceFormStore>();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10.0),
       width: double.infinity,
-      decoration: BoxDecoration(color: Colors.white),
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.red),
+      height: double.infinity,
+      child: Hero(
+        tag: 'image_${placeFormStore.place?.id}',
+        child: Observer(
+          builder: (_) => placeFormStore.imageFile != null
+              ? Image.file(
+                  placeFormStore.imageFile,
+                  fit: BoxFit.fitWidth,
+                )
+              : Image.asset(
+                  'assets/images/selectImagePlaceholder.png',
+                  fit: BoxFit.fitHeight,
+                ),
+        ),
       ),
     );
   }
+}
 
-  Widget _getImage() {
-    return placeFormStore.imageFile != null
-        ? Image.file(
-            placeFormStore.imageFile,
-            fit: BoxFit.fitWidth,
-          )
-        : Image.asset(
-            'assets/images/selectImagePlaceholder.png',
-            fit: BoxFit.fitHeight,
-          );
+class _ImageErrorMessage extends StatelessWidget {
+  final placeFormStore = Modular.get<PlaceFormStore>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(
+      builder: (_) => placeFormStore.imageError == null
+          ? Container()
+          : Container(
+              padding: EdgeInsets.all(10.0),
+              width: double.infinity,
+              decoration: BoxDecoration(color: Colors.white),
+              child: Text(
+                placeFormStore.imageError,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+    );
   }
 }
