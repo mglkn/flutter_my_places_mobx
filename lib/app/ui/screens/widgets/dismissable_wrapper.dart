@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:async/async.dart' show StreamGroup;
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../data/db.dart';
 import '../../../data/db_repository.dart';
 import '../../../store/stores.dart';
+import '../../../services/image.dart';
 
 // TODO: revise (ui or code) for more comfortable dismiss
 class DismissibleWrapper extends StatefulWidget {
@@ -17,6 +19,7 @@ class DismissibleWrapper extends StatefulWidget {
   final deleteDelay = const Duration(milliseconds: 2000);
   final showSnackBarDelay = const Duration(milliseconds: 1700);
   final placeListStore = Modular.get<PlaceListStore>();
+  final imageService = Modular.get<ImageService>();
 
   DismissibleWrapper({this.key, this.child, this.place});
 
@@ -77,6 +80,10 @@ class _DismissibleWrapperState extends State<DismissibleWrapper> {
 
     if (resultDesision) {
       await widget.repo.removePlace(widget.place);
+      if (widget.place?.image != null) {
+        // TODO: handle error with delete image
+        await widget.imageService.deleteImage(File(widget.place.image));
+      }
     }
 
     widget.placeListStore.isDismissing = false;

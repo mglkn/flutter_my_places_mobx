@@ -52,66 +52,29 @@ class _TileImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget _image = image != null
+        ? Image.file(File(image), fit: BoxFit.fill)
+        : Image.asset('assets/images/selectImagePlaceholder.png',
+            fit: BoxFit.fill);
+
     return Container(
       width: 70.0,
       height: 70.0,
       padding: const EdgeInsets.all(8.0),
       child: CircleAvatar(
         radius: 30.0,
-        child: ClipOval(
-          child: Hero(
-            tag: 'image_$id',
+        child: Hero(
+          tag: 'image_$id',
+          child: ClipOval(
             child: AspectRatio(
               aspectRatio: 1,
-              child: image != null
-                  ? _FileImage(image)
-                  : Image.asset('assets/images/selectImagePlaceholder.png',
-                      fit: BoxFit.fitHeight),
+              child: _image,
             ),
           ),
         ),
         backgroundColor: Colors.grey[300],
       ),
     );
-  }
-}
-
-class _FileImage extends StatefulWidget {
-  final String imagePath;
-
-  _FileImage(this.imagePath) : assert(imagePath != null);
-
-  @override
-  __FileImageState createState() => __FileImageState();
-}
-
-class __FileImageState extends State<_FileImage> {
-  bool _isExist = true;
-  File _image;
-
-  @override
-  void initState() {
-    _setImage();
-    super.initState();
-  }
-
-  Future _setImage() async {
-    final image = File(widget.imagePath);
-    final isExist = await image.exists();
-
-    setState(() {
-      _isExist = isExist;
-      _image = image;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _isExist && _image != null
-        ? Image.file(_image, fit: BoxFit.fitWidth)
-        // TODO: chanage placeholder to 'image not exist';
-        : Image.asset('assets/images/selectImagePlaceholder.png',
-            fit: BoxFit.fitHeight);
   }
 }
 

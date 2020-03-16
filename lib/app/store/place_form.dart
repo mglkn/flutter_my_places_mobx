@@ -9,6 +9,7 @@ import 'package:connectivity/connectivity.dart';
 import '../data/db.dart';
 import '../data/db_repository.dart';
 import '../services/geo.dart';
+import '../services/image.dart';
 
 part 'place_form.g.dart';
 
@@ -17,6 +18,7 @@ class PlaceFormStore = _PlaceFormStore with _$PlaceFormStore;
 abstract class _PlaceFormStore with Store implements Disposable {
   final DbDataRepository _repo;
   final GeoService _geoService;
+  final ImageService _imageService;
   StreamSubscription<ConnectivityResult> _subscription;
 
   @observable
@@ -24,9 +26,13 @@ abstract class _PlaceFormStore with Store implements Disposable {
   get place => _place as Place;
   set place(Place newValue) => _place = newValue;
 
-  _PlaceFormStore({DbDataRepository repo, GeoService geoService})
-      : _repo = repo ?? DbDataRepository.db(),
-        _geoService = geoService ?? GeoService.instance() {
+  _PlaceFormStore({
+    DbDataRepository repo,
+    GeoService geoService,
+    ImageService imageService,
+  })  : _repo = repo ?? DbDataRepository.db(),
+        _geoService = geoService ?? GeoService.instance(),
+        _imageService = imageService ?? ImageService.instance() {
     Connectivity().checkConnectivity().then(_connectivityCb);
 
     _subscription =
@@ -79,6 +85,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
 
   void init(Place place) {
     _place = null;
+    imageError = null;
 
     // reset form
     if (place == null) {
@@ -122,6 +129,9 @@ abstract class _PlaceFormStore with Store implements Disposable {
   File imageFile;
 
   @observable
+  String imageError;
+
+  @observable
   int rate;
 
   @observable
@@ -152,13 +162,34 @@ abstract class _PlaceFormStore with Store implements Disposable {
     }
   }
 
+  Future<String> _getImagePath() async {
+    imageError = null;
+
+    var imagePath;
+    if (imageFile != null && imageFile?.path != _place?.image)
+      imagePath = (await _imageService.saveImage(imageFile)).path;
+
+    // remove old image if we have new image and old image
+    if (imagePath != null && _place?.image != null)
+      await _imageService.deleteImage(File(_place.image));
+
+    return imagePath;
+  }
+
   @action
   Future<bool> savePlace() async {
     checkValidation();
+
     if ((nameFieldError != null && nameFieldError.length > 0) ||
         (typeFieldError != null && typeFieldError.length > 0)) return false;
 
-    final image = imageFile?.path;
+    var imagePath;
+    try {
+      imagePath = await _getImagePath();
+    } catch (_) {
+      imageError = 'Save image error. Try reload app.';
+      return false;
+    }
 
     final String coordinates = location == null
         ? null
@@ -170,7 +201,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
           name: name,
           type: type,
           rate: rate,
-          image: image,
+          image: imagePath,
           address: address,
           coordinates: coordinates,
         ),
@@ -183,7 +214,7 @@ abstract class _PlaceFormStore with Store implements Disposable {
         name: name,
         type: type,
         rate: rate,
-        image: image,
+        image: imagePath,
         address: address,
         coordinates: coordinates,
       ),

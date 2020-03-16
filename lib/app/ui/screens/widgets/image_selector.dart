@@ -146,11 +146,27 @@ class ImageSelector extends StatelessWidget {
                             );
                           },
                         ),
-                )
+                ),
+                placeFormStore.imageError == null
+                    ? Container()
+                    : _imageErrorMessage(placeFormStore.imageError)
               ],
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _imageErrorMessage(String message) {
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(color: Colors.white),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.red),
       ),
     );
   }
