@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:nanoid/nanoid.dart';
 
 abstract class ImageService {
@@ -37,6 +39,18 @@ class _ImageService implements ImageService {
 
   @override
   Future<File> pickImage(ImageSource source) async {
+    final storagePermission = PermissionGroup.storage;
+    PermissionStatus permissionStatus =
+        await PermissionHandler().checkPermissionStatus(storagePermission);
+    if (permissionStatus == PermissionStatus.denied) {
+      final permissions =
+          await PermissionHandler().requestPermissions([storagePermission]);
+      if (permissions[storagePermission] == PermissionStatus.denied) {
+        throw PlatformException(
+            code: 'photo_access_denied', message: 'Photo access denied');
+      }
+    }
+
     return ImagePicker.pickImage(source: source);
   }
 }

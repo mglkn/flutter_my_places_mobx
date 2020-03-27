@@ -132,7 +132,7 @@ class _MapSelectorScreenState extends State<MapSelectorScreen> {
                         myLocationEnabled: true,
                         initialCameraPosition: CameraPosition(
                           target: _currentLocation,
-                          zoom: 16.0,
+                          zoom: 18.0,
                         ),
                         onMapCreated: (GoogleMapController controller) {
                           _controller.complete(controller);

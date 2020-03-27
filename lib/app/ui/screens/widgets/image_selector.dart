@@ -47,11 +47,13 @@ class ImageSelector extends StatelessWidget {
         message: 'Unknown error. Check your permissions',
         context: context,
       );
+      return;
     } catch (error) {
       _showSnackBar(
         message: 'Unknown error. Check your permissions',
         context: context,
       );
+      return;
     }
 
     if (image == null) return;
